@@ -35,10 +35,10 @@ const WidgetADetail: React.FC<WidgetADetailProps> = ({ widget, onEdit }) => {
         </Typography>
       )}
       <Typography variant="body2">
-        Created: {new Date(widget.createdAt).toLocaleString()}
+        Created: {new Date(widget.created_at).toLocaleString()}
       </Typography>
       <Typography variant="body2">
-        Last Updated: {new Date(widget.updatedAt).toLocaleString()}
+        Last Updated: {new Date(widget.updated_at).toLocaleString()}
       </Typography>
       <Button onClick={onEdit} variant="outlined" color="primary" style={{ marginTop: '1rem' }}>
         Edit

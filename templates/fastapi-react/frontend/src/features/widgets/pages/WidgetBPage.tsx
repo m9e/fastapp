@@ -12,7 +12,7 @@ const WidgetBPage: React.FC = () => {
 
   const fetchWidgets = useCallback(async () => {
     try {
-      const response = await getWidgetsB(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
+      const response = await getWidgetsB(paginatedWidgets?.page || 1, paginatedWidgets?.page_size || 10);
       setPaginatedWidgets(response);
     } catch (error) {
       console.error('Failed to fetch Widget B data:', error);
@@ -20,11 +20,11 @@ const WidgetBPage: React.FC = () => {
         items: [],
         total: 0,
         page: 1,
-        pageSize: 10,
-        totalPages: 1,
+        page_size: 10,
+        total_pages: 1,
       });
     }
-  }, [paginatedWidgets?.page, paginatedWidgets?.pageSize]);
+  }, [paginatedWidgets?.page, paginatedWidgets?.page_size]);
 
   useEffect(() => {
     fetchWidgets();
@@ -84,7 +84,7 @@ const WidgetBPage: React.FC = () => {
             onDeleteWidget={handleDeleteWidget}
           />
           <Pagination 
-            count={paginatedWidgets.totalPages} 
+            count={paginatedWidgets.total_pages} 
             page={paginatedWidgets.page} 
             onChange={handlePageChange} 
             color="primary" 

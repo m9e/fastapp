@@ -15,8 +15,8 @@ const WidgetAPage: React.FC = () => {
 
   const fetchWidgets = useCallback(async () => {
     try {
-      const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
-      console.log('Fetched widgets:', response); // This line should now show the correct data
+      const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.page_size || 10);
+      console.log('Fetched widgets:', response);
       setPaginatedWidgets(response);
     } catch (error) {
       console.error('Failed to fetch widgets:', error);
@@ -25,11 +25,11 @@ const WidgetAPage: React.FC = () => {
         items: [],
         total: 0,
         page: 1,
-        pageSize: 10,
-        totalPages: 1,
+        page_size: 10,
+        total_pages: 1,
       });
     }
-  }, [paginatedWidgets?.page, paginatedWidgets?.pageSize]);
+  }, [paginatedWidgets?.page, paginatedWidgets?.page_size]);
 
   useEffect(() => {
     fetchWidgets();

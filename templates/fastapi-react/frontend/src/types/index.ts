@@ -25,8 +25,8 @@ export interface WidgetBCreate {
 
 export interface WidgetB extends WidgetBCreate {
   id: number;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ApiResponse<T> {
