@@ -1,35 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Typography, Button, Grid, Pagination } from '@mui/material';
 import WidgetBList from '../components/WidgetBList';
 import WidgetBDetail from '../components/WidgetBDetail';
 import { getWidgetsB, createWidgetB, deleteWidgetB } from '../api';
-import { WidgetB } from '../../../types';
-
-const ITEMS_PER_PAGE = 10;
+import { WidgetB, PaginatedResponse, WidgetBCreate } from '../../../types';
 
 const WidgetBPage: React.FC = () => {
-  const [widgets, setWidgets] = useState<WidgetB[]>([]);
+  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetB>>({
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: 10,
+    totalPages: 1
+  });
   const [selectedWidget, setSelectedWidget] = useState<WidgetB | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchWidgets = useCallback(async () => {
+    const response = await getWidgetsB(paginatedWidgets.page, paginatedWidgets.pageSize);
+    setPaginatedWidgets(response);
+  }, [paginatedWidgets.page, paginatedWidgets.pageSize]);
 
   useEffect(() => {
     fetchWidgets();
-  }, [page]);
-
-  const fetchWidgets = async () => {
-    const response = await getWidgetsB(page, ITEMS_PER_PAGE);
-    setWidgets(response.items);
-    setTotalPages(Math.ceil(response.total / ITEMS_PER_PAGE));
-  };
+  }, [fetchWidgets]);
 
   const handleCreateWidget = async () => {
-    const newWidget = await createWidgetB({ 
+    const newWidget: WidgetBCreate = { 
       name: `New Widget B ${Date.now()}`, 
       description: 'A new widget B', 
-      widgetAId: 1 
-    });
-    setWidgets([...widgets, newWidget]);
+      widgetAId: 1 // This should be dynamically set or selected by the user
+    };
+    await createWidgetB(newWidget);
+    fetchWidgets();
   };
 
   const handleSelectWidget = (widget: WidgetB) => {
@@ -38,14 +40,14 @@ const WidgetBPage: React.FC = () => {
 
   const handleDeleteWidget = async (id: number) => {
     await deleteWidgetB(id);
-    setWidgets(widgets.filter(w => w.id !== id));
+    fetchWidgets();
     if (selectedWidget && selectedWidget.id === id) {
       setSelectedWidget(null);
     }
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    setPaginatedWidgets(prev => ({ ...prev, page: value }));
   };
 
   return (
@@ -57,13 +59,13 @@ const WidgetBPage: React.FC = () => {
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <WidgetBList 
-            widgets={widgets} 
+            paginatedWidgets={paginatedWidgets}
             onSelectWidget={handleSelectWidget}
             onDeleteWidget={handleDeleteWidget}
           />
           <Pagination 
-            count={totalPages} 
-            page={page} 
+            count={paginatedWidgets.totalPages} 
+            page={paginatedWidgets.page} 
             onChange={handlePageChange} 
             color="primary" 
           />

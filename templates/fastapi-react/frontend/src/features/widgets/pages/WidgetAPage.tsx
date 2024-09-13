@@ -1,47 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Button, Grid, Pagination } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Typography, Grid, Pagination } from '@mui/material';
 import WidgetAList from '../components/WidgetAList';
 import WidgetADetail from '../components/WidgetADetail';
 import WidgetAForm from '../components/WidgetAForm';
 import { getWidgetsA, createWidgetA, updateWidgetA, deleteWidgetA } from '../api';
-import { WidgetA } from '../../../types';
+import { WidgetA, PaginatedResponse, WidgetACreate } from '../../../types';
 import { StyledPaper, StyledButton } from '../../../StyledComponents';
 
-const ITEMS_PER_PAGE = 10;
-
 const WidgetAPage: React.FC = () => {
-  const [widgets, setWidgets] = useState<WidgetA[]>([]);
+  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetA>>({
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: 10,
+    totalPages: 1
+  });
   const [selectedWidget, setSelectedWidget] = useState<WidgetA | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchWidgets = useCallback(async () => {
+    const response = await getWidgetsA(paginatedWidgets.page, paginatedWidgets.pageSize);
+    setPaginatedWidgets(response);
+  }, [paginatedWidgets.page, paginatedWidgets.pageSize]);
 
   useEffect(() => {
     fetchWidgets();
-  }, [page]);
+  }, [fetchWidgets]);
 
-  const fetchWidgets = async () => {
-    const response = await getWidgetsA(page, ITEMS_PER_PAGE);
-    setWidgets(response.items);
-    setTotalPages(Math.ceil(response.total / ITEMS_PER_PAGE));
-  };
-
-  const handleCreateWidget = async (widget: Omit<WidgetA, 'id'>) => {
-    const newWidget = await createWidgetA(widget);
-    setWidgets([...widgets, newWidget]);
+  const handleCreateWidget = async (widget: WidgetACreate) => {
+    await createWidgetA(widget);
+    fetchWidgets();
     setIsEditing(false);
   };
 
-  const handleUpdateWidget = async (id: number, widget: Partial<WidgetA>) => {
-    const updatedWidget = await updateWidgetA(id, widget);
-    setWidgets(widgets.map(w => w.id === id ? updatedWidget : w));
-    setSelectedWidget(updatedWidget);
+  const handleUpdateWidget = async (id: number, widget: WidgetACreate) => {
+    await updateWidgetA(id, widget);
+    fetchWidgets();
+    setSelectedWidget(null);
     setIsEditing(false);
   };
 
   const handleDeleteWidget = async (id: number) => {
     await deleteWidgetA(id);
-    setWidgets(widgets.filter(w => w.id !== id));
+    fetchWidgets();
     if (selectedWidget && selectedWidget.id === id) {
       setSelectedWidget(null);
     }
@@ -53,7 +54,7 @@ const WidgetAPage: React.FC = () => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    setPaginatedWidgets(prev => ({ ...prev, page: value }));
   };
 
   return (
@@ -62,13 +63,13 @@ const WidgetAPage: React.FC = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <WidgetAList 
-            widgets={widgets} 
+            paginatedWidgets={paginatedWidgets}
             onSelectWidget={handleSelectWidget}
             onDeleteWidget={handleDeleteWidget}
           />
           <Pagination 
-            count={totalPages} 
-            page={page} 
+            count={paginatedWidgets.totalPages} 
+            page={paginatedWidgets.page} 
             onChange={handlePageChange} 
             color="primary" 
           />

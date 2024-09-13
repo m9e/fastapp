@@ -44,10 +44,7 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const widgetData: WidgetACreate = { name };
-      if (description) {
-        widgetData.description = description;
-      }
+      const widgetData: WidgetACreate = { name, description };
       onSubmit(widgetData);
       setName('');
       setDescription('');

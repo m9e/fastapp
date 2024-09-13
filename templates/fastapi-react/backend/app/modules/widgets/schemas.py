@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
 
 class WidgetABase(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(..., max_length=50)
+    description: Optional[str] = Field(None, max_length=200)
 
 class WidgetACreate(WidgetABase):
     pass
@@ -15,11 +15,11 @@ class WidgetA(WidgetABase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WidgetBBase(BaseModel):
-    name: str
-    description: Optional[str] = None
+    name: str = Field(..., max_length=50)
+    description: Optional[str] = Field(None, max_length=200)
     widget_a_id: int
 
 class WidgetBCreate(WidgetBBase):
@@ -31,7 +31,7 @@ class WidgetB(WidgetBBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PaginatedResponse(BaseModel):
     items: List[BaseModel]
