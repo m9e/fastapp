@@ -19,9 +19,18 @@ const WidgetAPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchWidgets = useCallback(async () => {
-    const response = await getWidgetsA(paginatedWidgets.page, paginatedWidgets.pageSize);
-    setPaginatedWidgets(response);
-  }, [paginatedWidgets.page, paginatedWidgets.pageSize]);
+    try {
+        const response = await getWidgetsA(paginatedWidgets.page, paginatedWidgets.pageSize);
+        setPaginatedWidgets(response);
+    } catch (error) {
+        console.error("Failed to fetch widgets:", error);
+        setPaginatedWidgets((prev: PaginatedResponse<WidgetA>) => ({
+            ...prev,
+            totalPages: 1, // Fallback value to prevent undefined page errors
+            page: 1,       // Reset to a valid page
+        }));
+    }
+}, [paginatedWidgets.page, paginatedWidgets.pageSize]);
 
   useEffect(() => {
     fetchWidgets();
@@ -54,7 +63,10 @@ const WidgetAPage: React.FC = () => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPaginatedWidgets(prev => ({ ...prev, page: value }));
+    setPaginatedWidgets((prev: PaginatedResponse<WidgetA>) => ({
+        ...prev,
+        page: value || 1, // Ensure a valid fallback
+    }));
   };
 
   return (
@@ -68,8 +80,8 @@ const WidgetAPage: React.FC = () => {
             onDeleteWidget={handleDeleteWidget}
           />
           <Pagination 
-            count={paginatedWidgets.totalPages} 
-            page={paginatedWidgets.page} 
+            count={paginatedWidgets?.totalPages || 1}  // Safe fallback
+            page={paginatedWidgets?.page || 1}         // Safe fallback
             onChange={handlePageChange} 
             color="primary" 
           />
