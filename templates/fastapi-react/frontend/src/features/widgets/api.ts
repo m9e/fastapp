@@ -2,6 +2,7 @@ import axios from 'axios';
 import { WidgetA, WidgetACreate, WidgetB, WidgetBCreate, PaginatedResponse, ApiResponse, ApiError } from '../../types';
 
 const API_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/widgets';
+console.log('API_URL:', API_URL); // Add this line to check the API URL
 
 // WidgetA functions
 export const getWidgetsA = async (page: number, limit: number): Promise<PaginatedResponse<WidgetA>> => {
@@ -13,9 +14,12 @@ export const getWidgetsA = async (page: number, limit: number): Promise<Paginate
 
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {
   try {
+    console.log('Sending createWidgetA request with data:', widget); // Add this line
     const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
+    console.log('createWidgetA response:', response.data); // Add this line
     return response.data.data;
   } catch (error) {
+    console.error('Error in createWidgetA:', error); // Add this line
     throw handleApiError(error);
   }
 };

@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from typing import List, Optional
+from datetime import datetime
 
 class WidgetService:
     @staticmethod
     def create_widget_a(db: Session, widget: schemas.WidgetACreate) -> models.WidgetA:
-        db_widget = models.WidgetA(**widget.dict())
+        db_widget = models.WidgetA(**widget.dict(), created_at=datetime.utcnow(), updated_at=datetime.utcnow())
         db.add(db_widget)
         db.commit()
         db.refresh(db_widget)

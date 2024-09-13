@@ -4,7 +4,7 @@ import WidgetAList from '../components/WidgetAList';
 import WidgetADetail from '../components/WidgetADetail';
 import WidgetAForm from '../components/WidgetAForm';
 import { getWidgetsA, createWidgetA, updateWidgetA, deleteWidgetA } from '../api';
-import { WidgetA, PaginatedResponse, WidgetACreate } from '../../../types';
+import { WidgetA, PaginatedResponse } from '../../../types';
 import { StyledPaper, StyledButton } from '../../../StyledComponents';
 
 const WidgetAPage: React.FC = () => {
@@ -38,6 +38,7 @@ const WidgetAPage: React.FC = () => {
   };
 
   const handleCreateOrUpdateWidget = async (widget: WidgetA) => {
+    console.log('handleCreateOrUpdateWidget called with:', widget); // Add this line
     if (selectedWidget) {
       await updateWidgetA(selectedWidget.id, widget);
     } else {

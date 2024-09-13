@@ -44,15 +44,18 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted'); // Add this line
     if (validate()) {
       const widgetData: WidgetACreate = { name, description };
       try {
+        console.log('Sending data:', widgetData); // Add this line
         let createdOrUpdatedWidget: WidgetA;
         if (initialData) {
           createdOrUpdatedWidget = await updateWidgetA(initialData.id, widgetData);
         } else {
           createdOrUpdatedWidget = await createWidgetA(widgetData);
         }
+        console.log('Response:', createdOrUpdatedWidget); // Add this line
         onSubmit(createdOrUpdatedWidget);
         if (!initialData) {
           setName('');
