@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, FormHelperText } from '@mui/material';
 import { WidgetA, WidgetACreate } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
-import { createWidgetA } from '../api';
+import { createWidgetA, updateWidgetA } from '../api';
 
 interface WidgetAFormProps {
   onSubmit: (widget: WidgetA) => void;
@@ -47,12 +47,19 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
     if (validate()) {
       const widgetData: WidgetACreate = { name, description };
       try {
-        const createdWidget = await createWidgetA(widgetData);
-        onSubmit(createdWidget);
-        setName('');
-        setDescription('');
+        let createdOrUpdatedWidget: WidgetA;
+        if (initialData) {
+          createdOrUpdatedWidget = await updateWidgetA(initialData.id, widgetData);
+        } else {
+          createdOrUpdatedWidget = await createWidgetA(widgetData);
+        }
+        onSubmit(createdOrUpdatedWidget);
+        if (!initialData) {
+          setName('');
+          setDescription('');
+        }
       } catch (error) {
-        console.error('Error creating Widget A:', error);
+        console.error('Error creating/updating Widget A:', error);
         // Handle error (e.g., show error message to user)
       }
     }

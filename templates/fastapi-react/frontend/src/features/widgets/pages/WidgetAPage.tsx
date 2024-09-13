@@ -8,7 +8,7 @@ import { WidgetA, PaginatedResponse, WidgetACreate } from '../../../types';
 import { StyledPaper, StyledButton } from '../../../StyledComponents';
 
 const WidgetAPage: React.FC = () => {
-  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetA> | null>(null);  // Use null as the initial value
+  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetA> | null>(null);
   const [selectedWidget, setSelectedWidget] = useState<WidgetA | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -37,14 +37,12 @@ const WidgetAPage: React.FC = () => {
     setIsEditing(true);
   };
 
-  const handleCreateWidget = async (widget: WidgetACreate) => {
-    await createWidgetA(widget);
-    fetchWidgets();
-    setIsEditing(false);
-  };
-
-  const handleUpdateWidget = async (id: number, widget: WidgetACreate) => {
-    await updateWidgetA(id, widget);
+  const handleCreateOrUpdateWidget = async (widget: WidgetA) => {
+    if (selectedWidget) {
+      await updateWidgetA(selectedWidget.id, widget);
+    } else {
+      await createWidgetA(widget);
+    }
     fetchWidgets();
     setSelectedWidget(null);
     setIsEditing(false);
@@ -66,53 +64,36 @@ const WidgetAPage: React.FC = () => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPaginatedWidgets((prev) => {
       if (!prev) {
-        return null;  // Handle case when prev is null
+        return null;
       }
-  
       return {
         ...prev,
-        page: value || 1, // Ensure a valid fallback
+        page: value,
       };
     });
   };
-
-  // After
-  if (!paginatedWidgets) {
-    return (
-      <StyledPaper>
-        <Typography>No widgets available.</Typography>
-        <StyledButton
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            setSelectedWidget(null);
-            setIsEditing(true);
-          }}
-        >
-          Create New Widget A
-        </StyledButton>
-      </StyledPaper>
-    );
-  }
-  
 
   return (
     <StyledPaper>
       <Typography variant="h4">Widgets A</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-        <WidgetAList
-            paginatedWidgets={paginatedWidgets}
-            onSelectWidget={handleSelectWidget}
-            onEditWidget={handleEditWidget}
-            onDeleteWidget={handleDeleteWidget}
-          />
-          <Pagination
-            count={paginatedWidgets.totalPages}
-            page={paginatedWidgets.page}
-            onChange={handlePageChange}
-            color="primary"
-          />
+          {paginatedWidgets && (
+            <>
+              <WidgetAList
+                paginatedWidgets={paginatedWidgets}
+                onSelectWidget={handleSelectWidget}
+                onEditWidget={handleEditWidget}
+                onDeleteWidget={handleDeleteWidget}
+              />
+              <Pagination
+                count={paginatedWidgets.totalPages}
+                page={paginatedWidgets.page}
+                onChange={handlePageChange}
+                color="primary"
+              />
+            </>
+          )}
           <StyledButton
             variant="contained"
             color="primary"
@@ -127,7 +108,7 @@ const WidgetAPage: React.FC = () => {
         <Grid item xs={12} md={6}>
           {isEditing ? (
             <WidgetAForm
-              onSubmit={selectedWidget ? (widget) => handleUpdateWidget(selectedWidget.id, widget) : handleCreateWidget}
+              onSubmit={handleCreateOrUpdateWidget}
               initialData={selectedWidget}
             />
           ) : selectedWidget ? (

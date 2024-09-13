@@ -46,7 +46,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widget
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const widgetData: WidgetBCreate = { name, description, widget_a_id: widgetAId };
+      const widgetData: WidgetBCreate = { name, description, widgetAId };
       try {
         const createdWidget = await createWidgetB(widgetData);
         onSubmit(createdWidget);
