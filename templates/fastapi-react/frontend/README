@@ -1,0 +1,7 @@
+// Instructions for modifying package.json file when breaking from the template:
+// 1. Update the "name" and "version" fields to match your project.
+// 2. Add or remove dependencies as needed for your project.
+// 3. Modify scripts or add new ones to suit your development workflow.
+// 4. Update the "browserslist" if you need to support different browsers.
+// 5. Adjust dev dependencies if you want to use different linting or formatting tools.
+// 6. Always run `npm install` after making changes to ensure your node_modules are up to date.

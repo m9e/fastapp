@@ -1,3 +1,6 @@
+# where we clone the template for testing
+working/
+
 # Python
 __pycache__
 *.pyc

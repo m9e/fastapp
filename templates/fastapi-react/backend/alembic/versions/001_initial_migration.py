@@ -1,5 +1,3 @@
-# backend/alembic/versions/001_initial_migration.py
-
 """initial migration
 
 Revision ID: 001
@@ -22,6 +20,8 @@ def upgrade():
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('description', sa.String(), nullable=True),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now(), onupdate=sa.func.now(), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_widgets_a_id'), 'widgets_a', ['id'], unique=False)
@@ -33,6 +33,8 @@ def upgrade():
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('description', sa.String(), nullable=True),
         sa.Column('widget_a_id', sa.Integer(), nullable=False),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now(), onupdate=sa.func.now(), nullable=False),
         sa.ForeignKeyConstraint(['widget_a_id'], ['widgets_a.id'], ),
         sa.PrimaryKeyConstraint('id')
     )

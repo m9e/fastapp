@@ -1,20 +1,35 @@
 import React from 'react';
-import { List, ListItem, ListItemText } from '@mui/material';
-import { WidgetA } from '../../../types';
+import { List, ListItem, ListItemText, IconButton, Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
+import { WidgetA, PaginatedResponse } from '../../../types';
 
 interface WidgetAListProps {
-  widgets: WidgetA[];
+  paginatedWidgets: PaginatedResponse<WidgetA>;
+  onSelectWidget: (widget: WidgetA) => void;
+  onDeleteWidget: (id: number) => void;
 }
 
-const WidgetAList: React.FC<WidgetAListProps> = ({ widgets }) => {
+const WidgetAList: React.FC<WidgetAListProps> = ({ paginatedWidgets, onSelectWidget, onDeleteWidget }) => {
   return (
-    <List>
-      {widgets.map((widget) => (
-        <ListItem key={widget.id}>
-          <ListItemText primary={widget.name} secondary={widget.description} />
-        </ListItem>
-      ))}
-    </List>
+    <>
+      <List>
+        {paginatedWidgets.items.map((widget) => (
+          <ListItem key={widget.id}>
+            <ListItemText 
+              primary={widget.name} 
+              secondary={widget.description || 'No description'}
+              onClick={() => onSelectWidget(widget)}
+            />
+            <IconButton onClick={() => onDeleteWidget(widget.id)}>
+              <Delete />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
+      <Typography variant="body2">
+        Page {paginatedWidgets.page} of {paginatedWidgets.totalPages} (Total items: {paginatedWidgets.total})
+      </Typography>
+    </>
   );
 };
 

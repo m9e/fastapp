@@ -46,26 +46,40 @@ install_nvm() {
 # Install Python dependencies
 install_python_deps() {
     print_color "Installing Python dependencies..." "$YELLOW"
-    pip install poetry
-    poetry install
+    if [ -f backend/pyproject.toml ]; then
+        cd backend
+        pip install poetry
+        poetry install
+        cd ..
+    else
+        print_color "pyproject.toml not found in the backend directory. Skipping Python dependency installation." "$RED"
+    fi
     print_color "Python dependencies installed" "$GREEN"
 }
 
 # Install Node.js dependencies
 install_node_deps() {
     print_color "Installing Node.js dependencies..." "$YELLOW"
-    cd frontend
-    npm install
-    cd ..
+    if [ -d frontend ] && [ -f frontend/package.json ]; then
+        cd frontend
+        npm install
+        cd ..
+    else
+        print_color "frontend directory or package.json not found. Skipping Node.js dependency installation." "$RED"
+    fi
     print_color "Node.js dependencies installed" "$GREEN"
 }
 
 # Initialize the database
 init_database() {
     print_color "Initializing the database..." "$YELLOW"
-    cd backend
-    alembic upgrade head
-    cd ..
+    if [ -d backend ] && [ -f backend/alembic.ini ]; then
+        cd backend
+        alembic upgrade head
+        cd ..
+    else
+        print_color "backend directory or alembic.ini not found. Skipping database initialization." "$RED"
+    fi
     print_color "Database initialized" "$GREEN"
 }
 
@@ -79,11 +93,15 @@ main() {
     install_node_deps
     init_database
 
-    if [ ! -f backend/.env ]; then
-        cp backend/.env.example backend/.env
-        echo "backend/.env file created. Please update it with your specific settings."
+    if [ -d backend ] && [ ! -f backend/.env ]; then
+        if [ -f backend/.env.example ]; then
+            cp backend/.env.example backend/.env
+            echo "backend/.env file created. Please update it with your specific settings."
+        else
+            print_color ".env.example file not found in the backend directory." "$RED"
+        fi
     else
-        echo "backend/.env file already exists."
+        echo "backend/.env file already exists or backend directory not found."
     fi    
     
     print_color "Initialization complete!" "$GREEN"

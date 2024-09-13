@@ -1,19 +1,17 @@
-// src/features/widgets/components/WidgetAForm.tsx
-
 import React, { useState, useEffect } from 'react';
 import { Button, FormHelperText } from '@mui/material';
-import { WidgetA } from '../../../types';
+import { WidgetA, WidgetACreate } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
 
 interface WidgetAFormProps {
-  onSubmit: (widget: Omit<WidgetA, 'id'>) => void;
-  initialData?: WidgetA;
+  onSubmit: (widget: WidgetACreate) => void;
+  initialData?: WidgetA | null;
 }
 
 const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [errors, setErrors] = useState({ name: '', description: '' });
+  const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   useEffect(() => {
     if (initialData) {
@@ -22,9 +20,9 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
     }
   }, [initialData]);
 
-  const validate = () => {
+  const validate = (): boolean => {
+    const newErrors: { name?: string; description?: string } = {};
     let isValid = true;
-    const newErrors = { name: '', description: '' };
 
     if (!name.trim()) {
       newErrors.name = 'Name is required';
@@ -46,7 +44,11 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit({ name, description });
+      const widgetData: WidgetACreate = { name };
+      if (description) {
+        widgetData.description = description;
+      }
+      onSubmit(widgetData);
       setName('');
       setDescription('');
     }

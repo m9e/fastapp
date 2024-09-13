@@ -1,7 +1,7 @@
-
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { WidgetB } from '../../../types';
+import { StyledPaper } from '../../../StyledComponents';
 
 interface WidgetBDetailProps {
   widget: WidgetB;
@@ -9,19 +9,25 @@ interface WidgetBDetailProps {
 
 const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget }) => {
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h5" component="div">
-          {widget.name}
-        </Typography>
+    <StyledPaper>
+      <Typography variant="h5" component="div">
+        {widget.name}
+      </Typography>
+      {widget.description && (
         <Typography variant="body2" color="text.secondary">
           {widget.description}
         </Typography>
-        <Typography variant="body2">
-          Associated Widget A ID: {widget.widgetAId}
-        </Typography>
-      </CardContent>
-    </Card>
+      )}
+      <Typography variant="body2">
+        Associated Widget A ID: {widget.widgetAId}
+      </Typography>
+      <Typography variant="body2">
+        Created: {new Date(widget.createdAt).toLocaleString()}
+      </Typography>
+      <Typography variant="body2">
+        Last Updated: {new Date(widget.updatedAt).toLocaleString()}
+      </Typography>
+    </StyledPaper>
   );
 };
 
