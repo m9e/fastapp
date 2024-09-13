@@ -42,7 +42,7 @@ const WidgetAList: React.FC<WidgetAListProps> = ({
         ))}
       </List>
       <Typography variant="body2">
-        Page {paginatedWidgets.page} of {paginatedWidgets.totalPages} (Total items: {paginatedWidgets.total})
+        Page {paginatedWidgets.page} of {paginatedWidgets.total_pages} (Total items: {paginatedWidgets.total})
       </Typography>
     </>
   );

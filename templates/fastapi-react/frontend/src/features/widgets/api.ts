@@ -6,10 +6,16 @@ console.log('API_URL:', API_URL); // Add this line to check the API URL
 
 // WidgetA functions
 export const getWidgetsA = async (page: number, limit: number): Promise<PaginatedResponse<WidgetA>> => {
-  const response = await axios.get<ApiResponse<PaginatedResponse<WidgetA>>>(`${API_URL}/widget-a`, {
-    params: { page, limit }
-  });
-  return response.data.data;
+  try {
+    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetA>>>(`${API_URL}/widget-a`, {
+      params: { page, limit }
+    });
+    console.log('API response:', response.data); // Add this line for debugging
+    return response.data.data; // Make sure we're returning the data property of the response
+  } catch (error) {
+    console.error('Error fetching widgets:', error);
+    throw error;
+  }
 };
 
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {

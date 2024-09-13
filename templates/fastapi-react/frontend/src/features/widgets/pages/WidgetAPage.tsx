@@ -16,10 +16,11 @@ const WidgetAPage: React.FC = () => {
   const fetchWidgets = useCallback(async () => {
     try {
       const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
-      console.log('Fetched widgets:', response); // Add this line
+      console.log('Fetched widgets:', response); // This line should now show the correct data
       setPaginatedWidgets(response);
     } catch (error) {
       console.error('Failed to fetch widgets:', error);
+      setError('Failed to fetch widgets. Please try again.');
       setPaginatedWidgets({
         items: [],
         total: 0,
@@ -98,7 +99,7 @@ const WidgetAPage: React.FC = () => {
                 onDeleteWidget={handleDeleteWidget}
               />
               <Pagination
-                count={paginatedWidgets.totalPages}
+                count={paginatedWidgets.total_pages}
                 page={paginatedWidgets.page}
                 onChange={handlePageChange}
                 color="primary"
