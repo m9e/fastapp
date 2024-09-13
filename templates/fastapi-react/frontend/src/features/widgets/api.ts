@@ -14,12 +14,12 @@ export const getWidgetsA = async (page: number, limit: number): Promise<Paginate
 
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {
   try {
-    console.log('Sending createWidgetA request with data:', widget); // Add this line
+    console.log('Sending createWidgetA request with data:', widget);
     const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
-    console.log('createWidgetA response:', response.data); // Add this line
+    console.log('createWidgetA response:', response.data);
     return response.data.data;
   } catch (error) {
-    console.error('Error in createWidgetA:', error); // Add this line
+    console.error('Error in createWidgetA:', error);
     throw handleApiError(error);
   }
 };

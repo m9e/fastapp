@@ -8,8 +8,9 @@ class WidgetABase(BaseModel):
     name: str = Field(..., max_length=50)
     description: Optional[str] = Field(None, max_length=200)
 
-class WidgetACreate(WidgetABase):
-    pass
+class WidgetACreate(BaseModel):
+    name: str = Field(..., max_length=50)
+    description: str | None = Field(None, max_length=200)
 
 class WidgetAUpdate(WidgetABase):
     pass
