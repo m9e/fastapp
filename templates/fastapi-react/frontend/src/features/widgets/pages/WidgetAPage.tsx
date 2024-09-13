@@ -4,7 +4,7 @@ import WidgetAList from '../components/WidgetAList';
 import WidgetADetail from '../components/WidgetADetail';
 import WidgetAForm from '../components/WidgetAForm';
 import { getWidgetsA, createWidgetA, updateWidgetA, deleteWidgetA } from '../api';
-import { WidgetA, PaginatedResponse } from '../../../types';
+import { WidgetA, WidgetACreate, PaginatedResponse } from '../../../types';
 import { StyledPaper, StyledButton } from '../../../StyledComponents';
 
 const WidgetAPage: React.FC = () => {
@@ -16,6 +16,7 @@ const WidgetAPage: React.FC = () => {
   const fetchWidgets = useCallback(async () => {
     try {
       const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
+      console.log('Fetched widgets:', response); // Add this line
       setPaginatedWidgets(response);
     } catch (error) {
       console.error('Failed to fetch widgets:', error);
@@ -88,7 +89,7 @@ const WidgetAPage: React.FC = () => {
       {error && <Alert severity="error">{error}</Alert>}
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          {paginatedWidgets && (
+          {paginatedWidgets ? (
             <>
               <WidgetAList
                 paginatedWidgets={paginatedWidgets}
@@ -103,6 +104,8 @@ const WidgetAPage: React.FC = () => {
                 color="primary"
               />
             </>
+          ) : (
+            <Typography>Loading widgets...</Typography>
           )}
           <StyledButton
             variant="contained"

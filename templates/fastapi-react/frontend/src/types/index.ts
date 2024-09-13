@@ -6,6 +6,14 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
+export interface WidgetA {
+  id: number;
+  name: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface WidgetACreate {
   name: string;
   description?: string;

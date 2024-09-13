@@ -16,6 +16,12 @@ const WidgetAList: React.FC<WidgetAListProps> = ({
   onEditWidget,
   onDeleteWidget,
 }) => {
+  console.log('WidgetAList received:', paginatedWidgets); // Add this line
+
+  if (paginatedWidgets.items.length === 0) {
+    return <Typography>No widgets found.</Typography>;
+  }
+
   return (
     <>
       <List>
