@@ -11,7 +11,7 @@ interface WidgetAFormProps {
 
 const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(initialData?.description ?? '');
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   useEffect(() => {

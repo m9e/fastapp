@@ -12,7 +12,7 @@ interface WidgetBFormProps {
 
 const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widgetAId }) => {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(initialData?.description ?? '');
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   useEffect(() => {
