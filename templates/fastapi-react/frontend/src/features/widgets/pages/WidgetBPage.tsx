@@ -6,19 +6,25 @@ import { getWidgetsB, createWidgetB, deleteWidgetB } from '../api';
 import { WidgetB, PaginatedResponse, WidgetBCreate } from '../../../types';
 
 const WidgetBPage: React.FC = () => {
-  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetB>>({
-    items: [],
-    total: 0,
-    page: 1,
-    pageSize: 10,
-    totalPages: 1
-  });
+  // Initialize with null to handle the loading state properly
+  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetB> | null>(null);
   const [selectedWidget, setSelectedWidget] = useState<WidgetB | null>(null);
 
   const fetchWidgets = useCallback(async () => {
-    const response = await getWidgetsB(paginatedWidgets.page, paginatedWidgets.pageSize);
-    setPaginatedWidgets(response);
-  }, [paginatedWidgets.page, paginatedWidgets.pageSize]);
+    try {
+      const response = await getWidgetsB(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
+      setPaginatedWidgets(response);
+    } catch (error) {
+      console.error('Failed to fetch Widget B data:', error);
+      setPaginatedWidgets({
+        items: [],
+        total: 0,
+        page: 1,
+        pageSize: 10,
+        totalPages: 1,
+      });
+    }
+  }, [paginatedWidgets?.page, paginatedWidgets?.pageSize]);
 
   useEffect(() => {
     fetchWidgets();
@@ -26,32 +32,37 @@ const WidgetBPage: React.FC = () => {
 
   const handleCreateWidget = async () => {
     const newWidget: WidgetBCreate = { 
-        name: `New Widget B ${Date.now()}`, 
-        description: 'A new widget B', 
-        widgetAId: 1 // This should be dynamically set or selected by the user
+      name: `New Widget B ${Date.now()}`, 
+      description: 'A new widget B', 
+      widgetAId: 1 // This should be dynamically set or selected by the user
     };
     await createWidgetB(newWidget);
     fetchWidgets();
   };
 
   const handleSelectWidget = (widget: WidgetB) => {
-      setSelectedWidget(widget);
+    setSelectedWidget(widget);
   };
 
   const handleDeleteWidget = async (id: number) => {
-      await deleteWidgetB(id);
-      fetchWidgets();
-      if (selectedWidget && selectedWidget.id === id) {
-          setSelectedWidget(null);
-      }
+    await deleteWidgetB(id);
+    fetchWidgets();
+    if (selectedWidget && selectedWidget.id === id) {
+      setSelectedWidget(null);
+    }
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-      setPaginatedWidgets((prev: PaginatedResponse<WidgetB>) => ({
-          ...prev,
-          page: value || 1, // Ensure a valid fallback
-      }));
+    setPaginatedWidgets((prev: PaginatedResponse<WidgetB>) => ({
+      ...prev,
+      page: value || 1, // Ensure a valid fallback
+    }));
   };
+
+  // Add conditional rendering to ensure paginatedWidgets is fully loaded before rendering components
+  if (!paginatedWidgets) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <div>

@@ -8,29 +8,25 @@ import { WidgetA, PaginatedResponse, WidgetACreate } from '../../../types';
 import { StyledPaper, StyledButton } from '../../../StyledComponents';
 
 const WidgetAPage: React.FC = () => {
-  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetA>>({
-    items: [],
-    total: 0,
-    page: 1,
-    pageSize: 10,
-    totalPages: 1
-  });
+  const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetA> | null>(null);  // Use null as the initial value
   const [selectedWidget, setSelectedWidget] = useState<WidgetA | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchWidgets = useCallback(async () => {
     try {
-        const response = await getWidgetsA(paginatedWidgets.page, paginatedWidgets.pageSize);
-        setPaginatedWidgets(response);
+      const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.pageSize || 10);
+      setPaginatedWidgets(response);
     } catch (error) {
-        console.error("Failed to fetch widgets:", error);
-        setPaginatedWidgets((prev: PaginatedResponse<WidgetA>) => ({
-            ...prev,
-            totalPages: 1, // Fallback value to prevent undefined page errors
-            page: 1,       // Reset to a valid page
-        }));
+      console.error('Failed to fetch widgets:', error);
+      setPaginatedWidgets({
+        items: [],
+        total: 0,
+        page: 1,
+        pageSize: 10,
+        totalPages: 1,
+      });
     }
-}, [paginatedWidgets.page, paginatedWidgets.pageSize]);
+  }, [paginatedWidgets?.page, paginatedWidgets?.pageSize]);
 
   useEffect(() => {
     fetchWidgets();
@@ -64,30 +60,35 @@ const WidgetAPage: React.FC = () => {
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPaginatedWidgets((prev: PaginatedResponse<WidgetA>) => ({
-        ...prev,
-        page: value || 1, // Ensure a valid fallback
+      ...prev,
+      page: value || 1,
     }));
   };
+
+  // Add conditional rendering to prevent accessing undefined properties
+  if (!paginatedWidgets) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <StyledPaper>
       <Typography variant="h4">Widgets A</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <WidgetAList 
+          <WidgetAList
             paginatedWidgets={paginatedWidgets}
             onSelectWidget={handleSelectWidget}
             onDeleteWidget={handleDeleteWidget}
           />
-          <Pagination 
-            count={paginatedWidgets?.totalPages || 1}  // Safe fallback
-            page={paginatedWidgets?.page || 1}         // Safe fallback
-            onChange={handlePageChange} 
-            color="primary" 
+          <Pagination
+            count={paginatedWidgets.totalPages}
+            page={paginatedWidgets.page}
+            onChange={handlePageChange}
+            color="primary"
           />
-          <StyledButton 
-            variant="contained" 
-            color="primary" 
+          <StyledButton
+            variant="contained"
+            color="primary"
             onClick={() => {
               setSelectedWidget(null);
               setIsEditing(true);
@@ -98,18 +99,12 @@ const WidgetAPage: React.FC = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           {isEditing ? (
-            <WidgetAForm 
-              onSubmit={selectedWidget ? 
-                (widget) => handleUpdateWidget(selectedWidget.id, widget) : 
-                handleCreateWidget
-              }
+            <WidgetAForm
+              onSubmit={selectedWidget ? (widget) => handleUpdateWidget(selectedWidget.id, widget) : handleCreateWidget}
               initialData={selectedWidget}
             />
           ) : selectedWidget ? (
-            <WidgetADetail 
-              widget={selectedWidget}
-              onEdit={() => setIsEditing(true)}
-            />
+            <WidgetADetail widget={selectedWidget} onEdit={() => setIsEditing(true)} />
           ) : null}
         </Grid>
       </Grid>
