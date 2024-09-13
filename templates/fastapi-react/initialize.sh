@@ -73,14 +73,19 @@ install_node_deps() {
 # Initialize the database
 init_database() {
     print_color "Initializing the database..." "$YELLOW"
-    if [ -d backend ] && [ -f backend/alembic.ini ]; then
+    if [ -d backend ]; then
         cd backend
-        alembic upgrade head
+        if [ -f alembic/alembic.ini ]; then
+            print_color "Running database migrations..." "$YELLOW"
+            poetry run alembic upgrade head
+        else
+            print_color "alembic.ini not found in backend/alembic/. Alembic may not be set up correctly." "$RED"
+        fi
         cd ..
     else
-        print_color "backend directory or alembic.ini not found. Skipping database initialization." "$RED"
+        print_color "backend directory not found. Skipping database initialization." "$RED"
     fi
-    print_color "Database initialized" "$GREEN"
+    print_color "Database initialization process completed" "$GREEN"
 }
 
 # Main execution
