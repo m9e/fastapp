@@ -32,6 +32,11 @@ const WidgetAPage: React.FC = () => {
     fetchWidgets();
   }, [fetchWidgets]);
 
+  const handleEditWidget = (widget: WidgetA) => {
+    setSelectedWidget(widget);
+    setIsEditing(true);
+  };
+
   const handleCreateWidget = async (widget: WidgetACreate) => {
     await createWidgetA(widget);
     fetchWidgets();
