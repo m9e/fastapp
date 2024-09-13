@@ -75,9 +75,9 @@ init_database() {
     print_color "Initializing the database..." "$YELLOW"
     if [ -d backend ]; then
         cd backend
-        if [ -f alembic/alembic.ini ]; then
+        if [ -f alembic.ini ]; then
             print_color "Running database migrations..." "$YELLOW"
-            poetry run alembic upgrade head
+            poetry run alembic -c alembic.ini upgrade head
         else
             print_color "alembic.ini not found in backend/alembic/. Alembic may not be set up correctly." "$RED"
         fi
