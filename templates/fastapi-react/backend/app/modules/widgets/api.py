@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from app.db.session import get_db
 from . import schemas, services
 from math import ceil
@@ -57,10 +57,11 @@ def create_widget_b(widget: schemas.WidgetBCreate, db: Session = Depends(get_db)
 def read_widget_bs(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
+    widget_a_id: Optional[int] = Query(None),
     db: Session = Depends(get_db)
 ):
-    widgets = services.WidgetService.get_widget_bs(db, skip=(page-1)*limit, limit=limit)
-    total = services.WidgetService.count_widget_bs(db)
+    widgets = services.WidgetService.get_widget_bs(db, widget_a_id=widget_a_id, skip=(page-1)*limit, limit=limit)
+    total = services.WidgetService.count_widget_bs(db, widget_a_id=widget_a_id)
     total_pages = ceil(total / limit)
     return {
         "items": widgets,

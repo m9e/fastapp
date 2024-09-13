@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { WidgetA, WidgetACreate, WidgetB, WidgetBCreate, PaginatedResponse, ApiResponse, ApiError } from '../../types';
 
-const API_URL = 'http://localhost:8000/api/widgets';
+const API_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/widgets';
 
 // WidgetA functions
 export const getWidgetsA = async (page: number, limit: number): Promise<PaginatedResponse<WidgetA>> => {
@@ -38,6 +38,17 @@ export const getWidgetsB = async (page: number, limit: number): Promise<Paginate
   return response.data.data;
 };
 
+export const getWidgetsBByWidgetAId = async (
+    widgetAId: number,
+    page = 1,
+    limit = 10
+  ): Promise<PaginatedResponse<WidgetB>> => {
+    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetB>>>(`${API_URL}/widget-b`, {
+      params: { widgetAId, page, limit },
+    });
+    return response.data.data;
+  };
+
 export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => {
   const response = await axios.post<ApiResponse<WidgetB>>(`${API_URL}/widget-b`, widget);
   return response.data.data;
@@ -59,8 +70,11 @@ export const deleteWidgetB = async (id: number): Promise<void> => {
 
 // Error handling
 export const handleApiError = (error: unknown): ApiError => {
-  if (axios.isAxiosError(error) && error.response) {
-    return error.response.data as ApiError;
-  }
-  return { message: 'An unexpected error occurred' };
-};
+    if (axios.isAxiosError(error)) {
+      if (error.response && error.response.data) {
+        return error.response.data as ApiError;
+      }
+      return { message: error.message };
+    }
+    return { message: 'An unexpected error occurred' };
+  };

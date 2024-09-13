@@ -59,16 +59,43 @@ const WidgetAPage: React.FC = () => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPaginatedWidgets((prev: PaginatedResponse<WidgetA>) => ({
-      ...prev,
-      page: value || 1,
-    }));
+    setPaginatedWidgets((prev) => {
+      if (!prev) {
+        return null;  // Handle case when prev is null
+      }
+  
+      return {
+        ...prev,
+        page: value || 1, // Ensure a valid fallback
+      };
+    });
   };
 
   // Add conditional rendering to prevent accessing undefined properties
-  if (!paginatedWidgets) {
-    return <Typography>Loading...</Typography>;
-  }
+// Before
+    if (!paginatedWidgets) {
+      return <Typography>Loading...</Typography>;
+    }
+
+    // After
+    if (!paginatedWidgets) {
+      return (
+        <StyledPaper>
+          <Typography>No widgets available.</Typography>
+          <StyledButton
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setSelectedWidget(null);
+              setIsEditing(true);
+            }}
+          >
+            Create New Widget A
+          </StyledButton>
+        </StyledPaper>
+      );
+    }
+  
 
   return (
     <StyledPaper>

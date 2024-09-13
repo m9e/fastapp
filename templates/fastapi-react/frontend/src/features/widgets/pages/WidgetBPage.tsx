@@ -53,10 +53,16 @@ const WidgetBPage: React.FC = () => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPaginatedWidgets((prev: PaginatedResponse<WidgetB>) => ({
-      ...prev,
-      page: value || 1, // Ensure a valid fallback
-    }));
+    setPaginatedWidgets((prev) => {
+      if (!prev) {
+        return null;  // Handle case when prev is null
+      }
+  
+      return {
+        ...prev,
+        page: value || 1, // Ensure a valid fallback
+      };
+    });
   };
 
   // Add conditional rendering to ensure paginatedWidgets is fully loaded before rendering components
