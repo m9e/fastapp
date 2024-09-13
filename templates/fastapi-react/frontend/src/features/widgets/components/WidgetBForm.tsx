@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, FormHelperText } from '@mui/material';
-import { WidgetA, WidgetACreate } from '../../../types';
+import { WidgetB, WidgetBCreate } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
-import { createWidgetA } from '../api';
+import { createWidgetB } from '../api';
 
-interface WidgetAFormProps {
-  onSubmit: (widget: WidgetA) => void;
-  initialData?: WidgetA | null;
+interface WidgetBFormProps {
+  onSubmit: (widget: WidgetB) => void;
+  initialData?: WidgetB | null;
+  widgetAId: number;
 }
 
-const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
+const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widgetAId }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
@@ -45,14 +46,14 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const widgetData: WidgetACreate = { name, description };
+      const widgetData: WidgetBCreate = { name, description, widget_a_id: widgetAId };
       try {
-        const createdWidget = await createWidgetA(widgetData);
+        const createdWidget = await createWidgetB(widgetData);
         onSubmit(createdWidget);
         setName('');
         setDescription('');
       } catch (error) {
-        console.error('Error creating Widget A:', error);
+        console.error('Error creating Widget B:', error);
         // Handle error (e.g., show error message to user)
       }
     }
@@ -78,11 +79,11 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
         rows={4}
       />
       <Button type="submit" variant="contained" color="primary">
-        {initialData ? 'Update' : 'Create'} Widget A
+        {initialData ? 'Update' : 'Create'} Widget B
       </Button>
       <FormHelperText>* Required field</FormHelperText>
     </StyledForm>
   );
 };
 
-export default WidgetAForm;
+export default WidgetBForm;

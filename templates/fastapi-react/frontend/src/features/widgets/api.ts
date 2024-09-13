@@ -12,8 +12,12 @@ export const getWidgetsA = async (page: number, limit: number): Promise<Paginate
 };
 
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {
-  const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
-  return response.data.data;
+  try {
+    const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
+    return response.data.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
 };
 
 export const getWidgetA = async (id: number): Promise<WidgetA> => {
@@ -50,8 +54,12 @@ export const getWidgetsBByWidgetAId = async (
   };
 
 export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => {
-  const response = await axios.post<ApiResponse<WidgetB>>(`${API_URL}/widget-b`, widget);
-  return response.data.data;
+  try {
+    const response = await axios.post<ApiResponse<WidgetB>>(`${API_URL}/widget-b`, widget);
+    return response.data.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
 };
 
 export const getWidgetB = async (id: number): Promise<WidgetB> => {
