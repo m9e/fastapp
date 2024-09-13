@@ -76,30 +76,24 @@ const WidgetAPage: React.FC = () => {
     });
   };
 
-  // Add conditional rendering to prevent accessing undefined properties
-// Before
-    if (!paginatedWidgets) {
-      return <Typography>Loading...</Typography>;
-    }
-
-    // After
-    if (!paginatedWidgets) {
-      return (
-        <StyledPaper>
-          <Typography>No widgets available.</Typography>
-          <StyledButton
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              setSelectedWidget(null);
-              setIsEditing(true);
-            }}
-          >
-            Create New Widget A
-          </StyledButton>
-        </StyledPaper>
-      );
-    }
+  // After
+  if (!paginatedWidgets) {
+    return (
+      <StyledPaper>
+        <Typography>No widgets available.</Typography>
+        <StyledButton
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setSelectedWidget(null);
+            setIsEditing(true);
+          }}
+        >
+          Create New Widget A
+        </StyledButton>
+      </StyledPaper>
+    );
+  }
   
 
   return (
@@ -107,9 +101,10 @@ const WidgetAPage: React.FC = () => {
       <Typography variant="h4">Widgets A</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <WidgetAList
+        <WidgetAList
             paginatedWidgets={paginatedWidgets}
             onSelectWidget={handleSelectWidget}
+            onEditWidget={handleEditWidget}
             onDeleteWidget={handleDeleteWidget}
           />
           <Pagination

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, List, ListItem, ListItemText } from '@mui/material';
 import { WidgetA, WidgetB } from '../../../types';
 import { StyledPaper } from '../../../StyledComponents';
-import { getWidgetsBByWidgetAId } from '../api'; // Ensure this function exists
+import { getWidgetsBByWidgetAId } from '../api';
 
 interface WidgetADetailProps {
   widget: WidgetA;
@@ -18,7 +18,7 @@ const WidgetADetail: React.FC<WidgetADetailProps> = ({ widget, onEdit }) => {
         const response = await getWidgetsBByWidgetAId(widget.id);
         setRelatedWidgetsB(response.items);
       } catch (error) {
-        console.error('Failed to fetch related Widgets B:', error);
+        console.error('Error fetching related Widgets B:', error);
       }
     };
     fetchRelatedWidgetsB();
@@ -43,16 +43,21 @@ const WidgetADetail: React.FC<WidgetADetailProps> = ({ widget, onEdit }) => {
       <Button onClick={onEdit} variant="outlined" color="primary" style={{ marginTop: '1rem' }}>
         Edit
       </Button>
-      <Typography variant="h6" style={{ marginTop: '1rem' }}>
+
+      <Typography variant="h6" style={{ marginTop: '2rem' }}>
         Related Widgets B:
       </Typography>
-      <List>
-        {relatedWidgetsB.map((widgetB) => (
-          <ListItem key={widgetB.id}>
-            <ListItemText primary={widgetB.name} secondary={widgetB.description} />
-          </ListItem>
-        ))}
-      </List>
+      {relatedWidgetsB.length > 0 ? (
+        <List>
+          {relatedWidgetsB.map((widgetB) => (
+            <ListItem key={widgetB.id}>
+              <ListItemText primary={widgetB.name} secondary={widgetB.description} />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Typography variant="body2">No related Widgets B found.</Typography>
+      )}
     </StyledPaper>
   );
 };

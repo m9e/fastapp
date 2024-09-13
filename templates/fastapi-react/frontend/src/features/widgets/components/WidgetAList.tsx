@@ -6,7 +6,7 @@ import { WidgetA, PaginatedResponse } from '../../../types';
 interface WidgetAListProps {
   paginatedWidgets: PaginatedResponse<WidgetA>;
   onSelectWidget: (widget: WidgetA) => void;
-  onEditWidget: (widget: WidgetA) => void; // Add this line
+  onEditWidget: (widget: WidgetA) => void;
   onDeleteWidget: (id: number) => void;
 }
 
@@ -36,8 +36,7 @@ const WidgetAList: React.FC<WidgetAListProps> = ({
         ))}
       </List>
       <Typography variant="body2">
-        Page {paginatedWidgets.page} of {paginatedWidgets.totalPages} (Total items:{' '}
-        {paginatedWidgets.total})
+        Page {paginatedWidgets.page} of {paginatedWidgets.totalPages} (Total items: {paginatedWidgets.total})
       </Typography>
     </>
   );
