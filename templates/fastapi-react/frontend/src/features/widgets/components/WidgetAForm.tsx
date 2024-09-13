@@ -5,7 +5,7 @@ import { StyledForm, StyledTextField } from '../../../StyledComponents';
 import { createWidgetA, updateWidgetA } from '../api';
 
 interface WidgetAFormProps {
-  onSubmit: (widget: WidgetA) => void;
+  onSubmit: (widget: WidgetACreate) => void;  // Change WidgetA to WidgetACreate
   initialData?: WidgetA | null;
 }
 
@@ -49,21 +49,13 @@ const WidgetAForm: React.FC<WidgetAFormProps> = ({ onSubmit, initialData }) => {
       const widgetData: WidgetACreate = { name, description: description || undefined };
       try {
         console.log('Sending data:', widgetData);
-        let createdOrUpdatedWidget: WidgetA;
-        if (initialData) {
-          createdOrUpdatedWidget = await updateWidgetA(initialData.id, widgetData);
-        } else {
-          createdOrUpdatedWidget = await createWidgetA(widgetData);
-        }
-        console.log('Response:', createdOrUpdatedWidget);
-        onSubmit(createdOrUpdatedWidget);
+        onSubmit(widgetData);  // Call onSubmit with widgetData directly
         if (!initialData) {
           setName('');
           setDescription('');
         }
       } catch (error) {
         console.error('Error creating/updating Widget A:', error);
-        // Handle error (e.g., show error message to user)
       }
     }
   };

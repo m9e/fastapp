@@ -38,21 +38,21 @@ const WidgetAPage: React.FC = () => {
     setIsEditing(true);
   };
 
-  const handleCreateOrUpdateWidget = async (widget: WidgetA) => {
-    console.log('handleCreateOrUpdateWidget called with:', widget);
+  const handleCreateOrUpdateWidget = async (widgetData: WidgetACreate) => {
+    console.log('handleCreateOrUpdateWidget called with:', widgetData);
     try {
+      let updatedWidget: WidgetA;
       if (selectedWidget) {
-        await updateWidgetA(selectedWidget.id, widget);
+        updatedWidget = await updateWidgetA(selectedWidget.id, widgetData);
       } else {
-        await createWidgetA(widget);
+        updatedWidget = await createWidgetA(widgetData);
       }
       await fetchWidgets();
       setSelectedWidget(null);
       setIsEditing(false);
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (error) {
       console.error('Error creating/updating widget:', error);
-      // Gracefully handle the error by setting an error state
       setError('An error occurred while creating/updating the widget. Please try again.');
     }
   };

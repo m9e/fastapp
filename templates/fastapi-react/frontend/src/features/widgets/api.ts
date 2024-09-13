@@ -20,6 +20,9 @@ export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => 
     return response.data.data;
   } catch (error) {
     console.error('Error in createWidgetA:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Response data:', error.response.data);
+    }
     throw handleApiError(error);
   }
 };
