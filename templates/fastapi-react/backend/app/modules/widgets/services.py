@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from typing import Tuple, List, Optional
+from typing import List, Optional
 
 class WidgetService:
     @staticmethod
@@ -16,10 +16,12 @@ class WidgetService:
         return db.query(models.WidgetA).filter(models.WidgetA.id == widget_id).first()
 
     @staticmethod
-    def get_widget_as(db: Session, skip: int = 0, limit: int = 100) -> Tuple[List[models.WidgetA], int]:
-        total = db.query(models.WidgetA).count()
-        widgets = db.query(models.WidgetA).offset(skip).limit(limit).all()
-        return widgets, total
+    def get_widget_as(db: Session, skip: int = 0, limit: int = 100) -> List[models.WidgetA]:
+        return db.query(models.WidgetA).offset(skip).limit(limit).all()
+
+    @staticmethod
+    def count_widget_as(db: Session) -> int:
+        return db.query(models.WidgetA).count()
 
     @staticmethod
     def update_widget_a(db: Session, widget_id: int, widget: schemas.WidgetAUpdate) -> Optional[models.WidgetA]:
@@ -52,10 +54,12 @@ class WidgetService:
         return db.query(models.WidgetB).filter(models.WidgetB.id == widget_id).first()
 
     @staticmethod
-    def get_widget_bs(db: Session, skip: int = 0, limit: int = 100) -> Tuple[List[models.WidgetB], int]:
-        total = db.query(models.WidgetB).count()
-        widgets = db.query(models.WidgetB).offset(skip).limit(limit).all()
-        return widgets, total
+    def get_widget_bs(db: Session, skip: int = 0, limit: int = 100) -> List[models.WidgetB]:
+        return db.query(models.WidgetB).offset(skip).limit(limit).all()
+
+    @staticmethod
+    def count_widget_bs(db: Session) -> int:
+        return db.query(models.WidgetB).count()
 
     @staticmethod
     def update_widget_b(db: Session, widget_id: int, widget: schemas.WidgetBUpdate) -> Optional[models.WidgetB]:

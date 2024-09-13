@@ -17,7 +17,8 @@ def read_widget_as(
     limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
-    widgets, total = services.WidgetService.get_widget_as(db, skip=(page-1)*limit, limit=limit)
+    widgets = services.WidgetService.get_widget_as(db, skip=(page-1)*limit, limit=limit)
+    total = services.WidgetService.count_widget_as(db)
     total_pages = ceil(total / limit)
     return {
         "items": widgets,
@@ -29,24 +30,24 @@ def read_widget_as(
 
 @router.get("/widget-a/{widget_id}", response_model=schemas.WidgetA)
 def read_widget_a(widget_id: int, db: Session = Depends(get_db)):
-    widget = services.WidgetService.get_widget_a(db, widget_id)
-    if widget is None:
-        raise HTTPException(status_code=404, detail="WidgetA not found")
-    return widget
+    db_widget = services.WidgetService.get_widget_a(db, widget_id=widget_id)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget A not found")
+    return db_widget
 
 @router.put("/widget-a/{widget_id}", response_model=schemas.WidgetA)
 def update_widget_a(widget_id: int, widget: schemas.WidgetAUpdate, db: Session = Depends(get_db)):
-    updated_widget = services.WidgetService.update_widget_a(db, widget_id, widget)
-    if updated_widget is None:
-        raise HTTPException(status_code=404, detail="WidgetA not found")
-    return updated_widget
+    db_widget = services.WidgetService.update_widget_a(db, widget_id=widget_id, widget=widget)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget A not found")
+    return db_widget
 
 @router.delete("/widget-a/{widget_id}", response_model=schemas.WidgetA)
 def delete_widget_a(widget_id: int, db: Session = Depends(get_db)):
-    deleted_widget = services.WidgetService.delete_widget_a(db, widget_id)
-    if deleted_widget is None:
-        raise HTTPException(status_code=404, detail="WidgetA not found")
-    return deleted_widget
+    db_widget = services.WidgetService.delete_widget_a(db, widget_id=widget_id)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget A not found")
+    return db_widget
 
 @router.post("/widget-b", response_model=schemas.WidgetB)
 def create_widget_b(widget: schemas.WidgetBCreate, db: Session = Depends(get_db)):
@@ -58,7 +59,8 @@ def read_widget_bs(
     limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
-    widgets, total = services.WidgetService.get_widget_bs(db, skip=(page-1)*limit, limit=limit)
+    widgets = services.WidgetService.get_widget_bs(db, skip=(page-1)*limit, limit=limit)
+    total = services.WidgetService.count_widget_bs(db)
     total_pages = ceil(total / limit)
     return {
         "items": widgets,
@@ -70,21 +72,21 @@ def read_widget_bs(
 
 @router.get("/widget-b/{widget_id}", response_model=schemas.WidgetB)
 def read_widget_b(widget_id: int, db: Session = Depends(get_db)):
-    widget = services.WidgetService.get_widget_b(db, widget_id)
-    if widget is None:
-        raise HTTPException(status_code=404, detail="WidgetB not found")
-    return widget
+    db_widget = services.WidgetService.get_widget_b(db, widget_id=widget_id)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget B not found")
+    return db_widget
 
 @router.put("/widget-b/{widget_id}", response_model=schemas.WidgetB)
 def update_widget_b(widget_id: int, widget: schemas.WidgetBUpdate, db: Session = Depends(get_db)):
-    updated_widget = services.WidgetService.update_widget_b(db, widget_id, widget)
-    if updated_widget is None:
-        raise HTTPException(status_code=404, detail="WidgetB not found")
-    return updated_widget
+    db_widget = services.WidgetService.update_widget_b(db, widget_id=widget_id, widget=widget)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget B not found")
+    return db_widget
 
 @router.delete("/widget-b/{widget_id}", response_model=schemas.WidgetB)
 def delete_widget_b(widget_id: int, db: Session = Depends(get_db)):
-    deleted_widget = services.WidgetService.delete_widget_b(db, widget_id)
-    if deleted_widget is None:
-        raise HTTPException(status_code=404, detail="WidgetB not found")
-    return deleted_widget
+    db_widget = services.WidgetService.delete_widget_b(db, widget_id=widget_id)
+    if db_widget is None:
+        raise HTTPException(status_code=404, detail="Widget B not found")
+    return db_widget
