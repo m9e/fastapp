@@ -10,8 +10,10 @@ export const getWidgetsA = async (page: number, limit: number): Promise<Paginate
     const response = await axios.get<ApiResponse<PaginatedResponse<WidgetA>>>(`${API_URL}/widget-a`, {
       params: { page, limit }
     });
-    console.log('API response:', response.data); // Add this line for debugging
-    return response.data.data; // Make sure we're returning the data property of the response
+    console.log('API response:', response.data);
+    const paginatedResponse = response.data.data;
+    console.log('Parsed paginatedResponse:', paginatedResponse);
+    return paginatedResponse;
   } catch (error) {
     console.error('Error fetching widgets:', error);
     throw error;

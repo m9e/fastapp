@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Typography, Grid, Pagination, Alert } from '@mui/material';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Typography, Grid, Pagination, Alert, CircularProgress } from '@mui/material';
 import WidgetAList from '../components/WidgetAList';
 import WidgetADetail from '../components/WidgetADetail';
 import WidgetAForm from '../components/WidgetAForm';
@@ -12,22 +12,22 @@ const WidgetAPage: React.FC = () => {
   const [selectedWidget, setSelectedWidget] = useState<WidgetA | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   const fetchWidgets = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response = await getWidgetsA(paginatedWidgets?.page || 1, paginatedWidgets?.page_size || 10);
-      console.log('Fetched widgets:', response);
+      console.log('Fetched widgets response:', response);
       setPaginatedWidgets(response);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch widgets:', error);
       setError('Failed to fetch widgets. Please try again.');
-      setPaginatedWidgets({
-        items: [],
-        total: 0,
-        page: 1,
-        page_size: 10,
-        total_pages: 1,
-      });
+      setPaginatedWidgets(null);
+    } finally {
+      setIsLoading(false);
     }
   }, [paginatedWidgets?.page, paginatedWidgets?.page_size]);
 
@@ -35,13 +35,9 @@ const WidgetAPage: React.FC = () => {
     fetchWidgets();
   }, [fetchWidgets]);
 
-  const handleEditWidget = (widget: WidgetA) => {
-    setSelectedWidget(widget);
-    setIsEditing(true);
-  };
-
   const handleCreateOrUpdateWidget = async (widgetData: WidgetACreate) => {
     console.log('handleCreateOrUpdateWidget called with:', widgetData);
+    setIsLoading(true);
     try {
       let updatedWidget: WidgetA;
       if (selectedWidget) {
@@ -49,6 +45,7 @@ const WidgetAPage: React.FC = () => {
       } else {
         updatedWidget = await createWidgetA(widgetData);
       }
+      console.log('Widget created/updated:', updatedWidget);
       await fetchWidgets();
       setSelectedWidget(null);
       setIsEditing(false);
@@ -56,14 +53,8 @@ const WidgetAPage: React.FC = () => {
     } catch (error) {
       console.error('Error creating/updating widget:', error);
       setError('An error occurred while creating/updating the widget. Please try again.');
-    }
-  };
-
-  const handleDeleteWidget = async (id: number) => {
-    await deleteWidgetA(id);
-    fetchWidgets();
-    if (selectedWidget && selectedWidget.id === id) {
-      setSelectedWidget(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,16 +63,34 @@ const WidgetAPage: React.FC = () => {
     setIsEditing(false);
   };
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPaginatedWidgets((prev) => {
-      if (!prev) {
-        return null;
+  const handleEditWidget = (widget: WidgetA) => {
+    setSelectedWidget(widget);
+    setIsEditing(true);
+    // Scroll to the edit form
+    setTimeout(() => {
+      editFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleDeleteWidget = async (id: number) => {
+    setIsLoading(true);
+    try {
+      await deleteWidgetA(id);
+      await fetchWidgets();
+      if (selectedWidget && selectedWidget.id === id) {
+        setSelectedWidget(null);
+        setIsEditing(false);
       }
-      return {
-        ...prev,
-        page: value,
-      };
-    });
+    } catch (error) {
+      console.error('Error deleting widget:', error);
+      setError('An error occurred while deleting the widget. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPaginatedWidgets(prev => prev ? { ...prev, page: value } : null);
   };
 
   return (
@@ -90,7 +99,9 @@ const WidgetAPage: React.FC = () => {
       {error && <Alert severity="error">{error}</Alert>}
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          {paginatedWidgets ? (
+          {isLoading ? (
+            <CircularProgress />
+          ) : paginatedWidgets && paginatedWidgets.items.length > 0 ? (
             <>
               <WidgetAList
                 paginatedWidgets={paginatedWidgets}
@@ -106,7 +117,7 @@ const WidgetAPage: React.FC = () => {
               />
             </>
           ) : (
-            <Typography>Loading widgets...</Typography>
+            <Typography>No widgets found.</Typography>
           )}
           <StyledButton
             variant="contained"
@@ -120,14 +131,16 @@ const WidgetAPage: React.FC = () => {
           </StyledButton>
         </Grid>
         <Grid item xs={12} md={6}>
-          {isEditing ? (
-            <WidgetAForm
-              onSubmit={handleCreateOrUpdateWidget}
-              initialData={selectedWidget}
-            />
-          ) : selectedWidget ? (
-            <WidgetADetail widget={selectedWidget} onEdit={() => setIsEditing(true)} />
-          ) : null}
+          <div ref={editFormRef}>
+            {isEditing ? (
+              <WidgetAForm
+                onSubmit={handleCreateOrUpdateWidget}
+                initialData={selectedWidget}
+              />
+            ) : selectedWidget ? (
+              <WidgetADetail widget={selectedWidget} onEdit={() => handleEditWidget(selectedWidget)} />
+            ) : null}
+          </div>
         </Grid>
       </Grid>
     </StyledPaper>

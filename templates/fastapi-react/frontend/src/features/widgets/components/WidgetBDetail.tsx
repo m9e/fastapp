@@ -22,10 +22,10 @@ const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget }) => {
         Associated Widget A ID: {widget.widgetAId}
       </Typography>
       <Typography variant="body2">
-        Created: {new Date(widget.createdAt).toLocaleString()}
+        Created: {new Date(widget.created_at).toLocaleString()}
       </Typography>
       <Typography variant="body2">
-        Last Updated: {new Date(widget.updatedAt).toLocaleString()}
+        Last Updated: {new Date(widget.updated_at).toLocaleString()}
       </Typography>
     </StyledPaper>
   );

@@ -178,8 +178,8 @@ export interface WidgetCCreate {
 
 export interface WidgetC extends WidgetCCreate {
   id: number;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export type WidgetCUpdate = Partial<WidgetCCreate>;

@@ -16,30 +16,34 @@ const WidgetAList: React.FC<WidgetAListProps> = ({
   onEditWidget,
   onDeleteWidget,
 }) => {
-  console.log('WidgetAList received:', paginatedWidgets); // Add this line
+  console.log('WidgetAList received:', paginatedWidgets);
 
-  if (paginatedWidgets.items.length === 0) {
+  if (!paginatedWidgets || paginatedWidgets.items.length === 0) {
+    console.log('No widgets found or paginatedWidgets is null');
     return <Typography>No widgets found.</Typography>;
   }
 
   return (
     <>
       <List>
-        {paginatedWidgets.items.map((widget) => (
-          <ListItem key={widget.id}>
-            <ListItemText
-              primary={widget.name}
-              secondary={widget.description || 'No description'}
-              onClick={() => onSelectWidget(widget)}
-            />
-            <IconButton onClick={() => onEditWidget(widget)}>
-              <Edit />
-            </IconButton>
-            <IconButton onClick={() => onDeleteWidget(widget.id)}>
-              <Delete />
-            </IconButton>
-          </ListItem>
-        ))}
+        {paginatedWidgets.items.map((widget) => {
+          console.log('Rendering widget:', widget);
+          return (
+            <ListItem key={widget.id}>
+              <ListItemText
+                primary={widget.name}
+                secondary={widget.description || 'No description'}
+                onClick={() => onSelectWidget(widget)}
+              />
+              <IconButton onClick={() => onEditWidget(widget)}>
+                <Edit />
+              </IconButton>
+              <IconButton onClick={() => onDeleteWidget(widget.id)}>
+                <Delete />
+              </IconButton>
+            </ListItem>
+          );
+        })}
       </List>
       <Typography variant="body2">
         Page {paginatedWidgets.page} of {paginatedWidgets.total_pages} (Total items: {paginatedWidgets.total})

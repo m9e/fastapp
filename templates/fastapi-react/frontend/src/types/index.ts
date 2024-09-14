@@ -13,8 +13,8 @@ export interface WidgetACreate {
 
 export interface WidgetA extends WidgetACreate {
   id: number;
-  created_at: string; // Changed from createdAt to created_at
-  updated_at: string; // Changed from updatedAt to updated_at
+  created_at: string;
+  updated_at: string;
 }
 
 export interface WidgetBCreate {
