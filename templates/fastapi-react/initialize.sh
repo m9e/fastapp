@@ -71,6 +71,7 @@ install_node_deps() {
 }
 
 # Initialize the database
+# We can't use this for initial, because Alembic messes up nullable columns with FK constraints
 init_database() {
     print_color "Initializing the database..." "$YELLOW"
     if [ -d backend ]; then
@@ -96,7 +97,9 @@ main() {
     check_node
     install_python_deps
     install_node_deps
-    init_database
+
+    # we can't use this for initial, because Alembic messes up nullable columns with FK constraints
+    #init_database
 
     if [ -d backend ] && [ ! -f backend/.env ]; then
         if [ -f backend/.env.example ]; then
@@ -112,6 +115,9 @@ main() {
     print_color "Initialization complete!" "$GREEN"
     print_color "To start the backend server, run: 'cd backend && uvicorn app.main:app --reload'" "$YELLOW"
     print_color "To start the frontend server, run: 'cd frontend && npm start'" "$YELLOW"
+    print_color "After the first run of the backend server, you should run this to initialize alembic if you plan to use it:" "$RED"
+    print_color "    cd backend && poetry run alembic revision --autogenerate -m 'Initial migration'" "$GREEN"
+    print_color "This cannot be run before the first run of the backend server, because Alembic messes up nullable columns with FK constraints" "$RED"
 }
 
 main

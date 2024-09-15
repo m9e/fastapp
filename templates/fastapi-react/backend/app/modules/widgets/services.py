@@ -44,7 +44,7 @@ class WidgetService:
 
     @staticmethod
     def create_widget_b(db: Session, widget: schemas.WidgetBCreate) -> models.WidgetB:
-        db_widget = models.WidgetB(**widget.dict(), created_at=datetime.utcnow(), updated_at=datetime.utcnow())
+        db_widget = models.WidgetB(**widget.dict(exclude_unset=True))
         db.add(db_widget)
         db.commit()
         db.refresh(db_widget)

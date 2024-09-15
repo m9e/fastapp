@@ -1,11 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from sqlalchemy import create_engine
 from app.db.session import engine
 from app.db.base import Base
 from app.modules.widgets.api import router as widgets_router
 
 # Create database tables
+
+engine = create_engine(settings.DATABASE_URL)
+
+# Drop all tables and recreate them
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title=settings.PROJECT_NAME)

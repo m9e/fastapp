@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, List, ListItem, ListItemText } from '@mui/material';
-import { WidgetA, WidgetB } from '../../../types';
+import { WidgetA, WidgetB, PaginatedResponse } from '../../../types';
 import { StyledPaper } from '../../../StyledComponents';
 import { getWidgetsBByWidgetAId } from '../api';
 
@@ -11,14 +11,18 @@ interface WidgetADetailProps {
 
 const WidgetADetail: React.FC<WidgetADetailProps> = ({ widget, onEdit }) => {
   const [relatedWidgetsB, setRelatedWidgetsB] = useState<WidgetB[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRelatedWidgetsB = async () => {
       try {
         const response = await getWidgetsBByWidgetAId(widget.id);
         setRelatedWidgetsB(response.items);
+        setError(null);
       } catch (error) {
         console.error('Error fetching related Widgets B:', error);
+        setError('Failed to load related Widgets B');
+        setRelatedWidgetsB([]);
       }
     };
     fetchRelatedWidgetsB();
@@ -47,7 +51,9 @@ const WidgetADetail: React.FC<WidgetADetailProps> = ({ widget, onEdit }) => {
       <Typography variant="h6" style={{ marginTop: '2rem' }}>
         Related Widgets B:
       </Typography>
-      {relatedWidgetsB.length > 0 ? (
+      {error ? (
+        <Typography color="error">{error}</Typography>
+      ) : relatedWidgetsB.length > 0 ? (
         <List>
           {relatedWidgetsB.map((widgetB) => (
             <ListItem key={widgetB.id}>

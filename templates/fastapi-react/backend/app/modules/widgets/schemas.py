@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Generic, TypeVar
+from typing import List, Generic, TypeVar, Optional
 from datetime import datetime
 
 T = TypeVar('T')
@@ -44,9 +44,15 @@ class WidgetB(WidgetBBase):
     class Config:
         from_attributes = True
 
+T = TypeVar('T')
+
 class PaginatedResponse(BaseModel, Generic[T]):
     items: List[T]
     total: int
     page: int
     page_size: int
     total_pages: int
+
+    model_config = {
+        "from_attributes": True  # Enables population from ORM models like SQLAlchemy
+    }
