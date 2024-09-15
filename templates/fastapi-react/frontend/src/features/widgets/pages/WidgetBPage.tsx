@@ -75,7 +75,11 @@ const WidgetBPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error updating Widget B:', error);
-      setError('Failed to update widget. Please try again.');
+      if (error instanceof Error) {
+        setError(`Failed to update widget: ${error.message}`);
+      } else {
+        setError('Failed to update widget. Please try again.');
+      }
     }
   };
 

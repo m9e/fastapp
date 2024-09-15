@@ -135,10 +135,10 @@ export const getWidgetB = async (id: number): Promise<WidgetB> => {
 export const updateWidgetB = async (id: number, widget: Partial<WidgetBCreate>): Promise<WidgetB> => {
   try {
     console.log('Sending updateWidgetB request with data:', widget);
-    const response = await axios.put<ApiResponse<WidgetB>>(`${API_URL}/widget-b/${id}`, widget);
+    const response = await axios.put<WidgetB>(`${API_URL}/widget-b/${id}`, widget);
     console.log('updateWidgetB response:', response.data);
-    if (response.data && response.data.data) {
-      return response.data.data;
+    if (response.data) {
+      return response.data;
     } else {
       throw new Error('Invalid response structure');
     }
