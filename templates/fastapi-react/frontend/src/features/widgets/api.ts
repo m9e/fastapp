@@ -118,18 +118,32 @@ export const getWidgetsB = async (page: number, limit: number): Promise<Paginate
 
 export const getWidgetB = async (id: number): Promise<WidgetB> => {
   try {
-    const response = await axios.get<WidgetB>(`${API_URL}/widget-b/${id}`);
-    return response.data;
+    console.log('Sending getWidgetB request for id:', id);
+    const response = await axios.get<ApiResponse<WidgetB>>(`${API_URL}/widget-b/${id}`);
+    console.log('getWidgetB response:', response.data);
+    if (response.data && response.data.data) {
+      return response.data.data;
+    } else {
+      throw new Error('Invalid response structure');
+    }
   } catch (error) {
+    console.error('Error in getWidgetB:', error);
     throw handleApiError(error);
   }
 };
 
 export const updateWidgetB = async (id: number, widget: Partial<WidgetBCreate>): Promise<WidgetB> => {
   try {
-    const response = await axios.put<WidgetB>(`${API_URL}/widget-b/${id}`, widget);
-    return response.data;
+    console.log('Sending updateWidgetB request with data:', widget);
+    const response = await axios.put<ApiResponse<WidgetB>>(`${API_URL}/widget-b/${id}`, widget);
+    console.log('updateWidgetB response:', response.data);
+    if (response.data && response.data.data) {
+      return response.data.data;
+    } else {
+      throw new Error('Invalid response structure');
+    }
   } catch (error) {
+    console.error('Error in updateWidgetB:', error);
     throw handleApiError(error);
   }
 };

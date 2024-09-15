@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextField, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import { WidgetBCreate, WidgetA } from '../../../types';
+import { WidgetBCreate, WidgetA, WidgetB } from '../../../types';  // Add WidgetB to the import
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
 
 interface WidgetBFormProps {
   onSubmit: (widget: WidgetBCreate) => void;
   widgetAs: WidgetA[];
-  initialData?: WidgetBCreate | null;
+  initialData?: WidgetB;
 }
 
 const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialData }) => {
@@ -14,6 +14,14 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
   const [description, setDescription] = useState(initialData?.description || '');
   const [widgetAId, setWidgetAId] = useState<number | null>(initialData?.widgetAId || null);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name);
+      setDescription(initialData.description || '');
+      setWidgetAId(initialData.widgetAId !== undefined ? initialData.widgetAId : null);
+    }
+  }, [initialData]);
 
   const validate = (): boolean => {
     const newErrors: { name?: string; description?: string } = {};
