@@ -2,8 +2,8 @@ export interface PaginatedResponse<T> {
   items: T[];
   total: number;
   page: number;
-  page_size: number; // Changed from pageSize to page_size
-  total_pages: number; // Changed from totalPages to total_pages
+  page_size: number;
+  total_pages: number;
 }
 
 export interface WidgetACreate {
@@ -20,7 +20,7 @@ export interface WidgetA extends WidgetACreate {
 export interface WidgetBCreate {
   name: string;
   description?: string;
-  widgetAId?: number;
+  widget_a_id?: number;  // Changed from widgetAId to widget_a_id
 }
 
 export interface WidgetB extends WidgetBCreate {

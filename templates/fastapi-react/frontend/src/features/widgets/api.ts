@@ -39,13 +39,16 @@ export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => 
 
 export const getWidgetA = async (id: number): Promise<WidgetA> => {
   try {
-    const response = await axios.get<ApiResponse<WidgetA>>(`${API_URL}/widget-a/${id}`);
-    if (response.data && response.data.data) {
-      return response.data.data;
+    console.log('Fetching Widget A with ID:', id);
+    const response = await axios.get<WidgetA>(`${API_URL}/widget-a/${id}`);
+    console.log('getWidgetA response:', response.data);
+    if (response.data) {
+      return response.data;
     } else {
       throw new Error('Invalid response structure');
     }
   } catch (error) {
+    console.error('Error in getWidgetA:', error);
     throw handleApiError(error);
   }
 };
@@ -91,10 +94,7 @@ export const getWidgetsBByWidgetAId = async (widget_a_id: number, page = 1, limi
 export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => {
   try {
     console.log('Sending createWidgetB request with data:', widget);
-    const response = await axios.post<WidgetB>(`${API_URL}/widget-b`, {
-      ...widget,
-      widget_a_id: widget.widgetAId // Convert to snake_case for the backend
-    });
+    const response = await axios.post<WidgetB>(`${API_URL}/widget-b`, widget);
     console.log('createWidgetB response:', response.data);
     return response.data;
   } catch (error) {

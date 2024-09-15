@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import { WidgetBCreate, WidgetA, WidgetB } from '../../../types';  // Add WidgetB to the import
+import { Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { WidgetBCreate, WidgetA, WidgetB } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
 
 interface WidgetBFormProps {
@@ -12,14 +12,14 @@ interface WidgetBFormProps {
 const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialData }) => {
   const [name, setName] = useState(initialData?.name || '');
   const [description, setDescription] = useState(initialData?.description || '');
-  const [widgetAId, setWidgetAId] = useState<number | null>(initialData?.widgetAId || null);
+  const [widget_a_id, setWidgetAId] = useState<number | null>(initialData?.widget_a_id || null);
   const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
       setDescription(initialData.description || '');
-      setWidgetAId(initialData.widgetAId !== undefined ? initialData.widgetAId : null);
+      setWidgetAId(initialData.widget_a_id || null);
     }
   }, [initialData]);
 
@@ -50,7 +50,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
       onSubmit({
         name,
         description: description || undefined,
-        widgetAId: widgetAId || undefined,
+        widget_a_id: widget_a_id || undefined,
       });
     }
   };
@@ -80,7 +80,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
         <InputLabel id="widget-a-select-label">Widget A (Optional)</InputLabel>
         <Select
           labelId="widget-a-select-label"
-          value={widgetAId || ''}
+          value={widget_a_id || ''}
           onChange={(e) => setWidgetAId(e.target.value as number | null)}
         >
           <MenuItem value="">
@@ -88,7 +88,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
           </MenuItem>
           {widgetAs.map((widgetA) => (
             <MenuItem key={widgetA.id} value={widgetA.id}>
-              {widgetA.name}
+              {widgetA.name} ({widgetA.id})
             </MenuItem>
           ))}
         </Select>
