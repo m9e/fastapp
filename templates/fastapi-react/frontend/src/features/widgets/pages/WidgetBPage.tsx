@@ -70,11 +70,6 @@ const WidgetBPage: React.FC = () => {
     }
   };
 
-  const handleEditWidget = (widget: WidgetB) => {
-    setSelectedWidget(widget);
-    setIsEditing(true);
-  };
-
   const handleUpdateWidget = async (widgetData: WidgetBCreate) => {
     try {
       if (selectedWidget) {

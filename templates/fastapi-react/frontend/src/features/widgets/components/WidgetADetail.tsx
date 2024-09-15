@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, List, ListItem, ListItemText } from '@mui/material';
-import { WidgetA, WidgetB, PaginatedResponse } from '../../../types';
+import { WidgetA, WidgetB } from '../../../types';  // Remove PaginatedResponse
 import { StyledPaper } from '../../../StyledComponents';
 import { getWidgetsBByWidgetAId } from '../api';
 

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, FormHelperText } from '@mui/material';
-import { WidgetA, WidgetACreate } from '../../../types';
+import { Button, TextField } from '@mui/material';
+import { WidgetACreate, WidgetA } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
-import { createWidgetA, updateWidgetA } from '../api';
 
 interface WidgetAFormProps {
   onSubmit: (widget: WidgetACreate) => void;  // Change WidgetA to WidgetACreate

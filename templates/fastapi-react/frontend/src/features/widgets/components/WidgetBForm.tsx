@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { WidgetBCreate, WidgetA, WidgetB } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
 
