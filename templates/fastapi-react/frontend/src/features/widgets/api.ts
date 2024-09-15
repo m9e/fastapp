@@ -58,27 +58,26 @@ export const deleteWidgetA = async (id: number): Promise<void> => {
 
 export const getWidgetsBByWidgetAId = async (widget_a_id: number, page = 1, limit = 10): Promise<PaginatedResponse<WidgetB>> => {
   try {
-    const response = await axios.get<PaginatedResponse<WidgetB>>(`${API_URL}/widget-b`, {
+    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetB>>>(`${API_URL}/widget-b`, {
       params: { widget_a_id, page, limit }
     });
     console.log('getWidgetsBByWidgetAId response:', response.data);
-    if (!response.data || !response.data.items) {
+    if (!response.data || !response.data.data || !response.data.data.items) {
       throw new Error('Invalid response structure');
     }
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error('Error fetching widgets B by widget_a_id:', error);
-    // Return a default PaginatedResponse instead of throwing
-    return { items: [], total: 0, page: 1, page_size: limit, total_pages: 0 };
+    throw error; // Re-throw the error instead of returning a default response
   }
 };
 
 export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => {
   try {
     console.log('Sending createWidgetB request with data:', widget);
-    const response = await axios.post<WidgetB>(`${API_URL}/widget-b`, widget);
+    const response = await axios.post<ApiResponse<WidgetB>>(`${API_URL}/widget-b`, widget);
     console.log('createWidgetB response:', response.data);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error('Error in createWidgetB:', error);
     throw handleApiError(error);

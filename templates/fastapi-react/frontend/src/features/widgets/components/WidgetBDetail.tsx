@@ -10,6 +10,11 @@ interface WidgetBDetailProps {
 }
 
 const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget, onEdit, associatedWidgetA }) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
+  };
+
   return (
     <StyledPaper>
       <Typography variant="h5" component="div">
@@ -28,10 +33,10 @@ const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget, onEdit, associate
         }
       </Typography>
       <Typography variant="body2">
-        Created: {new Date(widget.created_at).toLocaleString()}
+        Created: {formatDate(widget.created_at)}
       </Typography>
       <Typography variant="body2">
-        Last Updated: {new Date(widget.updated_at).toLocaleString()}
+        Last Updated: {formatDate(widget.updated_at)}
       </Typography>
       <Button onClick={onEdit} variant="outlined" color="primary" style={{ marginTop: '1rem' }}>
         Edit
