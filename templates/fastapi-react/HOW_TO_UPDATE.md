@@ -125,11 +125,11 @@ class WidgetService:
 Add routes for WidgetC:
 
 ```python
-@router.post("/widget-c", response_model=schemas.WidgetC)
+@router.post("/widget-c", response_model=schemas.ApiResponse[schemas.WidgetC])
 def create_widget_c(widget: schemas.WidgetCCreate, db: Session = Depends(get_db)):
     return services.WidgetService.create_widget_c(db, widget)
 
-@router.get("/widget-c", response_model=schemas.PaginatedResponse[schemas.WidgetC])
+@router.get("/widget-c", response_model=schemas.ApiResponse[schemas.PaginatedResponse[schemas.WidgetC]])
 def read_widget_cs(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -138,29 +138,29 @@ def read_widget_cs(
     widgets = services.WidgetService.get_widget_cs(db, skip=(page-1)*limit, limit=limit)
     total = services.WidgetService.count_widget_cs(db)
     total_pages = ceil(total / limit)
-    return {
-        "items": widgets,
-        "total": total,
-        "page": page,
-        "page_size": limit,
-        "total_pages": total_pages
-    }
+    return schemas.PaginatedResponse(
+        items=widgets,
+        total=total,
+        page=page,
+        page_size=limit,
+        total_pages=total_pages
+    )
 
-@router.get("/widget-c/{widget_id}", response_model=schemas.WidgetC)
+@router.get("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
 def read_widget_c(widget_id: int, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.get_widget_c(db, widget_id=widget_id)
     if db_widget is None:
         raise HTTPException(status_code=404, detail="Widget C not found")
     return db_widget
 
-@router.put("/widget-c/{widget_id}", response_model=schemas.WidgetC)
+@router.put("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
 def update_widget_c(widget_id: int, widget: schemas.WidgetCUpdate, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.update_widget_c(db, widget_id=widget_id, widget=widget)
     if db_widget is None:
         raise HTTPException(status_code=404, detail="Widget C not found")
     return db_widget
 
-@router.delete("/widget-c/{widget_id}", response_model=schemas.WidgetC)
+@router.delete("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
 def delete_widget_c(widget_id: int, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.delete_widget_c(db, widget_id=widget_id)
     if db_widget is None:
@@ -204,10 +204,13 @@ Add API functions for WidgetC:
 
 export const getWidgetsC = async (page: number, limit: number): Promise<PaginatedResponse<WidgetC>> => {
   try {
-    const response = await axios.get<PaginatedResponse<WidgetC>>(`${API_URL}/widget-c`, {
+    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetC>>>(`${API_URL}/widget-c`, {
       params: { page, limit }
     });
-    return response.data;  // Note: response is not wrapped in a data field
+    if (response.data && response.data.data) {
+      return response.data.data;
+    }
+    throw new Error('Invalid response structure');
   } catch (error) {
     throw handleApiError(error);
   }
@@ -215,8 +218,11 @@ export const getWidgetsC = async (page: number, limit: number): Promise<Paginate
 
 export const createWidgetC = async (widget: WidgetCCreate): Promise<WidgetC> => {
   try {
-    const response = await axios.post<WidgetC>(`${API_URL}/widget-c`, widget);
-    return response.data;  // Note: response is not wrapped in a data field
+    const response = await axios.post<ApiResponse<WidgetC>>(`${API_URL}/widget-c`, widget);
+    if (response.data && response.data.data) {
+      return response.data.data;
+    }
+    throw new Error('Invalid response structure');
   } catch (error) {
     throw handleApiError(error);
   }
@@ -229,8 +235,11 @@ export const createWidgetC = async (widget: WidgetCCreate): Promise<WidgetC> => 
 ```typescript
 export const getWidgetC = async (id: number): Promise<WidgetC> => {
   try {
-    const response = await axios.get<WidgetC>(`${API_URL}/widget-c/${id}`);
-    return response.data;
+    const response = await axios.get<ApiResponse<WidgetC>>(`${API_URL}/widget-c/${id}`);
+    if (response.data && response.data.data) {
+      return response.data.data;
+    }
+    throw new Error('Invalid response structure');
   } catch (error) {
     throw handleApiError(error);
   }
@@ -238,8 +247,11 @@ export const getWidgetC = async (id: number): Promise<WidgetC> => {
 
 export const updateWidgetC = async (id: number, widget: WidgetCUpdate): Promise<WidgetC> => {
   try {
-    const response = await axios.put<WidgetC>(`${API_URL}/widget-c/${id}`, widget);
-    return response.data;
+    const response = await axios.put<ApiResponse<WidgetC>>(`${API_URL}/widget-c/${id}`, widget);
+    if (response.data && response.data.data) {
+      return response.data.data;
+    }
+    throw new Error('Invalid response structure');
   } catch (error) {
     throw handleApiError(error);
   }
