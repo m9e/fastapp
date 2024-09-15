@@ -20,7 +20,7 @@ class WidgetB(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String, nullable=True)
-    widget_a_id = Column(Integer, ForeignKey("widgets_a.id"))
+    widget_a_id = Column(Integer, ForeignKey("widgets_a.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

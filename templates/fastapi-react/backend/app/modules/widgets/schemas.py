@@ -26,13 +26,15 @@ class WidgetA(WidgetABase):
 class WidgetBBase(BaseModel):
     name: str = Field(..., max_length=50)
     description: Optional[str] = Field(None, max_length=200)
-    widget_a_id: int
+    widget_a_id: Optional[int] = None
 
 class WidgetBCreate(WidgetBBase):
     pass
 
-class WidgetBUpdate(WidgetBBase):
-    pass
+class WidgetBUpdate(BaseModel):
+    name: Optional[str] = Field(None, max_length=50)
+    description: Optional[str] = Field(None, max_length=200)
+    widget_a_id: Optional[int] = None
 
 class WidgetB(WidgetBBase):
     id: int

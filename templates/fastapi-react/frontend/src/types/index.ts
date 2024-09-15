@@ -19,8 +19,8 @@ export interface WidgetA extends WidgetACreate {
 
 export interface WidgetBCreate {
   name: string;
-  description?: string | null;
-  widgetAId: number;
+  description?: string;
+  widgetAId?: number;
 }
 
 export interface WidgetB extends WidgetBCreate {

@@ -71,23 +71,6 @@ export const deleteWidgetA = async (id: number): Promise<void> => {
   }
 };
 
-// WidgetB functions
-
-export const getWidgetsB = async (page: number, limit: number): Promise<PaginatedResponse<WidgetB>> => {
-  try {
-    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetB>>>(`${API_URL}/widget-b`, {
-      params: { page, limit }
-    });
-    if (response.data && response.data.data) {
-      return response.data.data;
-    } else {
-      throw new Error('Invalid response structure');
-    }
-  } catch (error) {
-    throw handleApiError(error);
-  }
-};
-
 export const getWidgetsBByWidgetAId = async (
   widgetAId: number,
   page = 1,
@@ -101,29 +84,32 @@ export const getWidgetsBByWidgetAId = async (
 
 export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => {
   try {
+    console.log('Sending createWidgetB request with data:', widget);
     const response = await axios.post<ApiResponse<WidgetB>>(`${API_URL}/widget-b`, {
       ...widget,
       widget_a_id: widget.widgetAId // Convert to snake_case for the backend
     });
+    console.log('createWidgetB response:', response.data);
     if (response.data && response.data.data) {
       return response.data.data;
     } else {
       throw new Error('Invalid response structure');
     }
   } catch (error) {
+    console.error('Error in createWidgetB:', error);
     throw handleApiError(error);
   }
 };
 
-export const getWidgetB = async (id: number): Promise<WidgetB> => {
+export const getWidgetsB = async (page: number, limit: number): Promise<PaginatedResponse<WidgetB>> => {
   try {
-    const response = await axios.get<ApiResponse<WidgetB>>(`${API_URL}/widget-b/${id}`);
-    if (response.data && response.data.data) {
-      return response.data.data;
-    } else {
-      throw new Error('Invalid response structure');
-    }
+    const response = await axios.get<PaginatedResponse<WidgetB>>(`${API_URL}/widget-b`, {
+      params: { page, limit }
+    });
+    console.log('API response:', response.data);
+    return response.data;
   } catch (error) {
+    console.error('Error fetching widgets B:', error);
     throw handleApiError(error);
   }
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { List, ListItem, ListItemText, IconButton, Typography } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { List, ListItem, ListItemText, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { WidgetB, PaginatedResponse } from '../../../types';
 
 interface WidgetBListProps {
@@ -11,25 +11,20 @@ interface WidgetBListProps {
 
 const WidgetBList: React.FC<WidgetBListProps> = ({ paginatedWidgets, onSelectWidget, onDeleteWidget }) => {
   return (
-    <>
-      <List>
-        {paginatedWidgets.items.map((widget) => (
-          <ListItem key={widget.id}>
-            <ListItemText 
-              primary={widget.name} 
-              secondary={`${widget.description || 'No description'} (Widget A ID: ${widget.widgetAId})`} 
-              onClick={() => onSelectWidget(widget)}
-            />
-            <IconButton onClick={() => onDeleteWidget(widget.id)}>
-              <Delete />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
-      <Typography variant="body2">
-        Page {paginatedWidgets.page} of {paginatedWidgets.total_pages} (Total items: {paginatedWidgets.total})
-      </Typography>
-    </>
+    <List>
+      {paginatedWidgets.items.map((widget) => (
+        <ListItem key={widget.id}>
+          <ListItemText
+            primary={widget.name}
+            secondary={widget.description}
+            onClick={() => onSelectWidget(widget)}
+          />
+          <IconButton edge="end" aria-label="delete" onClick={() => onDeleteWidget(widget.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </ListItem>
+      ))}
+    </List>
   );
 };
 

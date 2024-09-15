@@ -12,11 +12,11 @@ interface WidgetBFormProps {
 const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialData }) => {
   const [name, setName] = useState(initialData?.name || '');
   const [description, setDescription] = useState(initialData?.description || '');
-  const [widgetAId, setWidgetAId] = useState<number | ''>(initialData?.widgetAId || '');
-  const [errors, setErrors] = useState<{ name?: string; description?: string; widgetAId?: string }>({});
+  const [widgetAId, setWidgetAId] = useState<number | null>(initialData?.widgetAId || null);
+  const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   const validate = (): boolean => {
-    const newErrors: { name?: string; description?: string; widgetAId?: string } = {};
+    const newErrors: { name?: string; description?: string } = {};
     let isValid = true;
 
     if (!name.trim()) {
@@ -32,11 +32,6 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
       isValid = false;
     }
 
-    if (!widgetAId) {
-      newErrors.widgetAId = 'Widget A is required';
-      isValid = false;
-    }
-
     setErrors(newErrors);
     return isValid;
   };
@@ -47,7 +42,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
       onSubmit({
         name,
         description: description || undefined,
-        widgetAId: Number(widgetAId),
+        widgetAId: widgetAId || undefined,
       });
     }
   };
@@ -73,21 +68,22 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialDa
         multiline
         rows={4}
       />
-      <FormControl fullWidth error={!!errors.widgetAId}>
-        <InputLabel id="widget-a-select-label">Widget A</InputLabel>
+      <FormControl fullWidth>
+        <InputLabel id="widget-a-select-label">Widget A (Optional)</InputLabel>
         <Select
           labelId="widget-a-select-label"
-          value={widgetAId}
-          onChange={(e) => setWidgetAId(e.target.value as number)}
-          required
+          value={widgetAId || ''}
+          onChange={(e) => setWidgetAId(e.target.value as number | null)}
         >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
           {widgetAs.map((widgetA) => (
             <MenuItem key={widgetA.id} value={widgetA.id}>
               {widgetA.name}
             </MenuItem>
           ))}
         </Select>
-        {errors.widgetAId && <FormHelperText>{errors.widgetAId}</FormHelperText>}
       </FormControl>
       <Button type="submit" variant="contained" color="primary">
         {initialData ? 'Update' : 'Create'} Widget B
