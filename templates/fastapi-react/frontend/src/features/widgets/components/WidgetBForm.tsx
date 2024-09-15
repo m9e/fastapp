@@ -1,29 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Button, FormHelperText } from '@mui/material';
-import { WidgetB, WidgetBCreate } from '../../../types';
+import React, { useState } from 'react';
+import { Button, TextField, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { WidgetBCreate, WidgetA } from '../../../types';
 import { StyledForm, StyledTextField } from '../../../StyledComponents';
-import { createWidgetB } from '../api';
 
 interface WidgetBFormProps {
-  onSubmit: (widget: WidgetB) => void;
-  initialData?: WidgetB | null;
-  widgetAId: number;
+  onSubmit: (widget: WidgetBCreate) => void;
+  widgetAs: WidgetA[];
+  initialData?: WidgetBCreate | null;
 }
 
-const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widgetAId }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState(initialData?.description ?? '');
-  const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
-
-  useEffect(() => {
-    if (initialData) {
-      setName(initialData.name);
-      setDescription(initialData.description || '');
-    }
-  }, [initialData]);
+const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, widgetAs, initialData }) => {
+  const [name, setName] = useState(initialData?.name || '');
+  const [description, setDescription] = useState(initialData?.description || '');
+  const [widgetAId, setWidgetAId] = useState<number | ''>(initialData?.widgetAId || '');
+  const [errors, setErrors] = useState<{ name?: string; description?: string; widgetAId?: string }>({});
 
   const validate = (): boolean => {
-    const newErrors: { name?: string; description?: string } = {};
+    const newErrors: { name?: string; description?: string; widgetAId?: string } = {};
     let isValid = true;
 
     if (!name.trim()) {
@@ -34,8 +27,13 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widget
       isValid = false;
     }
 
-    if (description.length > 200) {
+    if (description && description.length > 200) {
       newErrors.description = 'Description must be 200 characters or less';
+      isValid = false;
+    }
+
+    if (!widgetAId) {
+      newErrors.widgetAId = 'Widget A is required';
       isValid = false;
     }
 
@@ -43,19 +41,14 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widget
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      const widgetData: WidgetBCreate = { name, description, widgetAId };
-      try {
-        const createdWidget = await createWidgetB(widgetData);
-        onSubmit(createdWidget);
-        setName('');
-        setDescription('');
-      } catch (error) {
-        console.error('Error creating Widget B:', error);
-        // Handle error (e.g., show error message to user)
-      }
+      onSubmit({
+        name,
+        description: description || undefined,
+        widgetAId: Number(widgetAId),
+      });
     }
   };
 
@@ -68,6 +61,7 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widget
         error={!!errors.name}
         helperText={errors.name}
         required
+        fullWidth
       />
       <StyledTextField
         label="Description"
@@ -75,13 +69,29 @@ const WidgetBForm: React.FC<WidgetBFormProps> = ({ onSubmit, initialData, widget
         onChange={(e) => setDescription(e.target.value)}
         error={!!errors.description}
         helperText={errors.description}
+        fullWidth
         multiline
         rows={4}
       />
+      <FormControl fullWidth error={!!errors.widgetAId}>
+        <InputLabel id="widget-a-select-label">Widget A</InputLabel>
+        <Select
+          labelId="widget-a-select-label"
+          value={widgetAId}
+          onChange={(e) => setWidgetAId(e.target.value as number)}
+          required
+        >
+          {widgetAs.map((widgetA) => (
+            <MenuItem key={widgetA.id} value={widgetA.id}>
+              {widgetA.name}
+            </MenuItem>
+          ))}
+        </Select>
+        {errors.widgetAId && <FormHelperText>{errors.widgetAId}</FormHelperText>}
+      </FormControl>
       <Button type="submit" variant="contained" color="primary">
         {initialData ? 'Update' : 'Create'} Widget B
       </Button>
-      <FormHelperText>* Required field</FormHelperText>
     </StyledForm>
   );
 };

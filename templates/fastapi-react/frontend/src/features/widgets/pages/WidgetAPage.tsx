@@ -36,7 +36,6 @@ const WidgetAPage: React.FC = () => {
   }, [fetchWidgets]);
 
   const handleCreateOrUpdateWidget = async (widgetData: WidgetACreate) => {
-    console.log('handleCreateOrUpdateWidget called with:', widgetData);
     setIsLoading(true);
     try {
       let updatedWidget: WidgetA;
@@ -52,7 +51,7 @@ const WidgetAPage: React.FC = () => {
       setError(null);
     } catch (error) {
       console.error('Error creating/updating widget:', error);
-      setError('An error occurred while creating/updating the widget. Please try again.');
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }

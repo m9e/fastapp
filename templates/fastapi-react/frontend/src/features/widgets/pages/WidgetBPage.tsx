@@ -2,13 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Typography, Button, Grid, Pagination } from '@mui/material';
 import WidgetBList from '../components/WidgetBList';
 import WidgetBDetail from '../components/WidgetBDetail';
-import { getWidgetsB, createWidgetB, deleteWidgetB } from '../api';
-import { WidgetB, PaginatedResponse, WidgetBCreate } from '../../../types';
+import WidgetBForm from '../components/WidgetBForm';
+import { getWidgetsB, createWidgetB, deleteWidgetB, getWidgetsA } from '../api';
+import { WidgetB, PaginatedResponse, WidgetBCreate, WidgetA } from '../../../types';
 
 const WidgetBPage: React.FC = () => {
-  // Initialize with null to handle the loading state properly
   const [paginatedWidgets, setPaginatedWidgets] = useState<PaginatedResponse<WidgetB> | null>(null);
   const [selectedWidget, setSelectedWidget] = useState<WidgetB | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [widgetAs, setWidgetAs] = useState<WidgetA[]>([]);
 
   const fetchWidgets = useCallback(async () => {
     try {
@@ -28,16 +30,26 @@ const WidgetBPage: React.FC = () => {
 
   useEffect(() => {
     fetchWidgets();
+    fetchWidgetAs();
   }, [fetchWidgets]);
 
-  const handleCreateWidget = async () => {
-    const newWidget: WidgetBCreate = { 
-      name: `New Widget B ${Date.now()}`, 
-      description: 'A new widget B', 
-      widgetAId: 1 // This should be dynamically set or selected by the user
-    };
-    await createWidgetB(newWidget);
-    fetchWidgets();
+  const fetchWidgetAs = async () => {
+    try {
+      const response = await getWidgetsA(1, 100); // Adjust pagination as needed
+      setWidgetAs(response.items);
+    } catch (error) {
+      console.error('Failed to fetch Widget As:', error);
+    }
+  };
+
+  const handleCreateWidget = async (widgetData: WidgetBCreate) => {
+    try {
+      const newWidget = await createWidgetB(widgetData);
+      fetchWidgets();
+      setIsCreating(false);
+    } catch (error) {
+      console.error('Error creating Widget B:', error);
+    }
   };
 
   const handleSelectWidget = (widget: WidgetB) => {
@@ -70,10 +82,11 @@ const WidgetBPage: React.FC = () => {
     return <Typography>Loading...</Typography>;
   }
 
+
   return (
     <div>
       <Typography variant="h4">Widgets B</Typography>
-      <Button variant="contained" color="primary" onClick={handleCreateWidget}>
+      <Button variant="contained" color="primary" onClick={() => setIsCreating(true)}>
         Create Widget B
       </Button>
       <Grid container spacing={2}>
@@ -83,15 +96,21 @@ const WidgetBPage: React.FC = () => {
             onSelectWidget={handleSelectWidget}
             onDeleteWidget={handleDeleteWidget}
           />
-          <Pagination 
-            count={paginatedWidgets.total_pages} 
-            page={paginatedWidgets.page} 
-            onChange={handlePageChange} 
-            color="primary" 
-          />
+          {paginatedWidgets && (
+            <Pagination 
+              count={paginatedWidgets.total_pages} 
+              page={paginatedWidgets.page} 
+              onChange={handlePageChange} 
+              color="primary" 
+            />
+          )}
         </Grid>
         <Grid item xs={6}>
-          {selectedWidget && <WidgetBDetail widget={selectedWidget} />}
+          {isCreating ? (
+            <WidgetBForm onSubmit={handleCreateWidget} widgetAs={widgetAs} />
+          ) : selectedWidget ? (
+            <WidgetBDetail widget={selectedWidget} />
+          ) : null}
         </Grid>
       </Grid>
     </div>

@@ -22,6 +22,6 @@ class WidgetB(Base):
     description = Column(String, nullable=True)
     widget_a_id = Column(Integer, ForeignKey("widgets_a.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     widget_a = relationship("WidgetA", back_populates="widget_bs")

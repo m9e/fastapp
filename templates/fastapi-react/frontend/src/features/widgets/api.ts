@@ -28,13 +28,9 @@ export const getWidgetsA = async (page: number, limit: number): Promise<Paginate
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {
   try {
     console.log('Sending createWidgetA request with data:', widget);
-    const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
+    const response = await axios.post<WidgetA>(`${API_URL}/widget-a`, widget);
     console.log('createWidgetA response:', response.data);
-    if (response.data && response.data.data) {
-      return response.data.data;
-    } else {
-      throw new Error('Invalid response structure');
-    }
+    return response.data;
   } catch (error) {
     console.error('Error in createWidgetA:', error);
     throw handleApiError(error);
