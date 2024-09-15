@@ -10,8 +10,6 @@ interface WidgetBDetailProps {
 }
 
 const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget, onEdit, associatedWidgetA }) => {
-  console.log('WidgetBDetail props:', { widget, associatedWidgetA });
-
   return (
     <StyledPaper>
       <Typography variant="h5" component="div">
@@ -22,9 +20,6 @@ const WidgetBDetail: React.FC<WidgetBDetailProps> = ({ widget, onEdit, associate
           {widget.description}
         </Typography>
       )}
-      <Typography variant="body2">
-        Debug: Widget A ID from widget: {widget.widget_a_id} // Changed from widgetAId to widget_a_id
-      </Typography>
       <Typography variant="body2">
         Associated Widget A: {
           associatedWidgetA 

@@ -3,7 +3,7 @@ import { Typography, Button, Grid, Pagination, CircularProgress } from '@mui/mat
 import WidgetBList from '../components/WidgetBList';
 import WidgetBDetail from '../components/WidgetBDetail';
 import WidgetBForm from '../components/WidgetBForm';
-import { getWidgetsB, createWidgetB, deleteWidgetB, getWidgetsA, updateWidgetB, getWidgetA } from '../api';  // Add getWidgetA to the import
+import { getWidgetsB, createWidgetB, deleteWidgetB, getWidgetsA, updateWidgetB, getWidgetA } from '../api';
 import { WidgetB, PaginatedResponse, WidgetBCreate, WidgetA } from '../../../types';
 
 const WidgetBPage: React.FC = () => {
@@ -21,10 +21,8 @@ const WidgetBPage: React.FC = () => {
     setError(null);
     try {
       const response = await getWidgetsB(paginatedWidgets?.page || 1, paginatedWidgets?.page_size || 10);
-      console.log('Fetched widgets response:', response);
       setPaginatedWidgets(response);
     } catch (error) {
-      console.error('Failed to fetch Widget B data:', error);
       setError('Failed to fetch widgets. Please try again.');
       setPaginatedWidgets(null);
     } finally {
@@ -47,23 +45,15 @@ const WidgetBPage: React.FC = () => {
   };
 
   const fetchAssociatedWidgetA = useCallback(async (widget_a_id: number | undefined | null) => {
-    console.log('Fetching associated Widget A for ID:', widget_a_id);
     if (widget_a_id) {
       try {
         const associatedA = await getWidgetA(widget_a_id);
-        console.log('Associated Widget A fetched:', associatedA);
         setAssociatedWidgetA(associatedA);
       } catch (error) {
-        console.error('Error fetching associated Widget A:', error);
         setAssociatedWidgetA(null);
-        if (error instanceof Error) {
-          setError(`Failed to fetch associated Widget A: ${error.message}`);
-        } else {
-          setError('Failed to fetch associated Widget A. Please try again.');
-        }
+        setError('Failed to fetch associated Widget A. Please try again.');
       }
     } else {
-      console.log('No associated Widget A ID, setting to null');
       setAssociatedWidgetA(null);
     }
   }, []);
@@ -71,13 +61,11 @@ const WidgetBPage: React.FC = () => {
   const handleCreateWidget = async (widgetData: WidgetBCreate) => {
     try {
       const newWidget = await createWidgetB(widgetData);
-      console.log('New widget created:', newWidget);
       await fetchWidgets();
       setIsCreating(false);
       setError(null);
       handleSelectWidget(newWidget);
     } catch (error) {
-      console.error('Error creating Widget B:', error);
       setError('Failed to create widget. Please try again.');
     }
   };
@@ -91,35 +79,26 @@ const WidgetBPage: React.FC = () => {
     try {
       if (selectedWidget) {
         const updatedWidget = await updateWidgetB(selectedWidget.id, widgetData);
-        console.log('Widget updated:', updatedWidget);
         await fetchWidgets();
         setSelectedWidget(updatedWidget);
         setIsEditing(false);
         setError(null);
-        await fetchAssociatedWidgetA(updatedWidget.widget_a_id);  // Changed from widgetAId to widget_a_id
+        await fetchAssociatedWidgetA(updatedWidget.widget_a_id);
       }
     } catch (error) {
-      console.error('Error updating Widget B:', error);
-      if (error instanceof Error) {
-        setError(`Failed to update widget: ${error.message}`);
-      } else {
-        setError('Failed to update widget. Please try again.');
-      }
+      setError('Failed to update widget. Please try again.');
     }
   };
 
   const handleSelectWidget = useCallback(async (widget: WidgetB) => {
-    console.log('Selected Widget B:', widget);
     setSelectedWidget(widget);
     setIsCreating(false);
     setIsEditing(false);
-    console.log('Calling fetchAssociatedWidgetA with ID:', widget.widget_a_id);
     await fetchAssociatedWidgetA(widget.widget_a_id);
   }, [fetchAssociatedWidgetA]);
 
   useEffect(() => {
     if (selectedWidget) {
-      console.log('Selected Widget changed, fetching associated Widget A');
       fetchAssociatedWidgetA(selectedWidget.widget_a_id);
     }
   }, [selectedWidget, fetchAssociatedWidgetA]);
@@ -132,7 +111,6 @@ const WidgetBPage: React.FC = () => {
         setSelectedWidget(null);
       }
     } catch (error) {
-      console.error('Error deleting Widget B:', error);
       setError('Failed to delete widget. Please try again.');
     }
   };
@@ -140,10 +118,6 @@ const WidgetBPage: React.FC = () => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPaginatedWidgets(prev => prev ? { ...prev, page: value } : null);
   };
-
-  useEffect(() => {
-    console.log('associatedWidgetA state changed:', associatedWidgetA);
-  }, [associatedWidgetA]);
 
   return (
     <div>
@@ -180,15 +154,11 @@ const WidgetBPage: React.FC = () => {
           ) : isEditing && selectedWidget ? (
             <WidgetBForm onSubmit={handleUpdateWidget} widgetAs={widgetAs} initialData={selectedWidget} />
           ) : selectedWidget ? (
-            <>
-              <Typography>Debug: Selected Widget B: {JSON.stringify(selectedWidget)}</Typography>
-              <Typography>Debug: Associated Widget A: {JSON.stringify(associatedWidgetA)}</Typography>
-              <WidgetBDetail
-                widget={selectedWidget}
-                onEdit={() => setIsEditing(true)}
-                associatedWidgetA={associatedWidgetA}
-              />
-            </>
+            <WidgetBDetail
+              widget={selectedWidget}
+              onEdit={() => setIsEditing(true)}
+              associatedWidgetA={associatedWidgetA}
+            />
           ) : null}
         </Grid>
       </Grid>
