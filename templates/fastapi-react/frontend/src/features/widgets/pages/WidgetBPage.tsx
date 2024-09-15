@@ -23,6 +23,7 @@ const WidgetBPage: React.FC = () => {
       const response = await getWidgetsB(paginatedWidgets?.page || 1, paginatedWidgets?.page_size || 10);
       setPaginatedWidgets(response);
     } catch (error) {
+      console.error('Error fetching widgets:', error);
       setError('Failed to fetch widgets. Please try again.');
       setPaginatedWidgets(null);
     } finally {
@@ -125,7 +126,7 @@ const WidgetBPage: React.FC = () => {
         <Grid item xs={6}>
           {isLoading ? (
             <CircularProgress />
-          ) : paginatedWidgets && paginatedWidgets.items.length > 0 ? (
+          ) : paginatedWidgets && paginatedWidgets.items && paginatedWidgets.items.length > 0 ? (
             <>
               <WidgetBList 
                 paginatedWidgets={paginatedWidgets}

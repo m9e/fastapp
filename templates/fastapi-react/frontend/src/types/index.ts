@@ -6,6 +6,11 @@ export interface PaginatedResponse<T> {
   total_pages: number;
 }
 
+export interface ApiResponse<T> {
+  data: T;
+  message: string;
+}
+
 export interface WidgetACreate {
   name: string;
   description?: string | null;
@@ -20,18 +25,13 @@ export interface WidgetA extends WidgetACreate {
 export interface WidgetBCreate {
   name: string;
   description?: string;
-  widget_a_id?: number;  // Changed from widgetAId to widget_a_id
+  widget_a_id?: number;
 }
 
 export interface WidgetB extends WidgetBCreate {
   id: number;
   created_at: string;
   updated_at: string;
-}
-
-export interface ApiResponse<T> {
-  data: T;
-  message: string;
 }
 
 export interface ApiError {

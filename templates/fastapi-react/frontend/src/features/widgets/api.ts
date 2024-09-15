@@ -8,47 +8,29 @@ console.log('API_URL:', API_URL);
 
 export const getWidgetsA = async (page: number, limit: number): Promise<PaginatedResponse<WidgetA>> => {
     try {
-      const response = await axios.get<PaginatedResponse<WidgetA>>(`${API_URL}/widget-a`, {
+      const response = await axios.get<ApiResponse<PaginatedResponse<WidgetA>>>(`${API_URL}/widget-a`, {
         params: { page, limit }
       });
-      console.log('API response:', response.data);
-      if (response.data && response.data.items) {
-        const paginatedResponse = response.data;
-        console.log('Parsed paginatedResponse:', paginatedResponse);
-        return paginatedResponse;
-      } else {
-        throw new Error('Invalid response structure');
-      }
+      return response.data.data;
     } catch (error) {
-      console.error('Error fetching widgets:', error);
       throw handleApiError(error);
     }
   };
 
 export const createWidgetA = async (widget: WidgetACreate): Promise<WidgetA> => {
   try {
-    console.log('Sending createWidgetA request with data:', widget);
-    const response = await axios.post<WidgetA>(`${API_URL}/widget-a`, widget);
-    console.log('createWidgetA response:', response.data);
-    return response.data;
+    const response = await axios.post<ApiResponse<WidgetA>>(`${API_URL}/widget-a`, widget);
+    return response.data.data;
   } catch (error) {
-    console.error('Error in createWidgetA:', error);
     throw handleApiError(error);
   }
 };
 
 export const getWidgetA = async (id: number): Promise<WidgetA> => {
   try {
-    console.log('Fetching Widget A with ID:', id);
-    const response = await axios.get<WidgetA>(`${API_URL}/widget-a/${id}`);
-    console.log('getWidgetA response:', response.data);
-    if (response.data) {
-      return response.data;
-    } else {
-      throw new Error('Invalid response structure');
-    }
+    const response = await axios.get<ApiResponse<WidgetA>>(`${API_URL}/widget-a/${id}`);
+    return response.data.data;
   } catch (error) {
-    console.error('Error in getWidgetA:', error);
     throw handleApiError(error);
   }
 };
@@ -105,11 +87,10 @@ export const createWidgetB = async (widget: WidgetBCreate): Promise<WidgetB> => 
 
 export const getWidgetsB = async (page: number, limit: number): Promise<PaginatedResponse<WidgetB>> => {
   try {
-    const response = await axios.get<PaginatedResponse<WidgetB>>(`${API_URL}/widget-b`, {
+    const response = await axios.get<ApiResponse<PaginatedResponse<WidgetB>>>(`${API_URL}/widget-b`, {
       params: { page, limit }
     });
-    console.log('getWidgetsB response:', response.data);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error('Error fetching widgets B:', error);
     throw handleApiError(error);
