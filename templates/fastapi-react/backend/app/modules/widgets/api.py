@@ -60,7 +60,7 @@ def read_widget_bs(
     widget_a_id: Optional[int] = Query(None),
     db: Session = Depends(get_db)
 ):
-    widgets = services.WidgetService.get_widget_bs(db, widget_a_id=widget_a_id, skip=(page-1)*limit, limit=limit)
+    widgets = services.WidgetService.get_widget_bs(db, skip=(page-1)*limit, limit=limit, widget_a_id=widget_a_id)
     total = services.WidgetService.count_widget_bs(db, widget_a_id=widget_a_id)
     total_pages = ceil(total / limit)
     return {

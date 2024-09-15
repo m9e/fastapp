@@ -55,12 +55,18 @@ class WidgetService:
         return db.query(models.WidgetB).filter(models.WidgetB.id == widget_id).first()
 
     @staticmethod
-    def get_widget_bs(db: Session, skip: int = 0, limit: int = 100) -> List[models.WidgetB]:
-        return db.query(models.WidgetB).offset(skip).limit(limit).all()
+    def get_widget_bs(db: Session, skip: int = 0, limit: int = 100, widget_a_id: Optional[int] = None) -> List[models.WidgetB]:
+        query = db.query(models.WidgetB)
+        if widget_a_id is not None:
+            query = query.filter(models.WidgetB.widget_a_id == widget_a_id)
+        return query.offset(skip).limit(limit).all()
 
     @staticmethod
-    def count_widget_bs(db: Session) -> int:
-        return db.query(models.WidgetB).count()
+    def count_widget_bs(db: Session, widget_a_id: Optional[int] = None) -> int:
+        query = db.query(models.WidgetB)
+        if widget_a_id is not None:
+            query = query.filter(models.WidgetB.widget_a_id == widget_a_id)
+        return query.count()
 
     @staticmethod
     def update_widget_b(db: Session, widget_id: int, widget: schemas.WidgetBUpdate) -> Optional[models.WidgetB]:
