@@ -127,7 +127,9 @@ Add routes for WidgetC:
 ```python
 @router.post("/widget-c", response_model=schemas.ApiResponse[schemas.WidgetC])
 def create_widget_c(widget: schemas.WidgetCCreate, db: Session = Depends(get_db)):
-    return services.WidgetService.create_widget_c(db, widget)
+    db_widget = services.WidgetService.create_widget_c(db, widget)
+    return schemas.ApiResponse(data=db_widget, message="Widget C created successfully")
+
 
 @router.get("/widget-c", response_model=schemas.ApiResponse[schemas.PaginatedResponse[schemas.WidgetC]])
 def read_widget_cs(
@@ -138,12 +140,15 @@ def read_widget_cs(
     widgets = services.WidgetService.get_widget_cs(db, skip=(page-1)*limit, limit=limit)
     total = services.WidgetService.count_widget_cs(db)
     total_pages = ceil(total / limit)
-    return schemas.PaginatedResponse(
-        items=widgets,
-        total=total,
-        page=page,
-        page_size=limit,
-        total_pages=total_pages
+    return schemas.ApiResponse(
+        data=schemas.PaginatedResponse(
+            items=widgets,
+            total=total,
+            page=page,
+            page_size=limit,
+            total_pages=total_pages
+        ),
+        message="Widgets C retrieved successfully"
     )
 
 @router.get("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
@@ -151,24 +156,22 @@ def read_widget_c(widget_id: int, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.get_widget_c(db, widget_id=widget_id)
     if db_widget is None:
         raise HTTPException(status_code=404, detail="Widget C not found")
-    return db_widget
+    return schemas.ApiResponse(data=db_widget, message="Widget C retrieved successfully")
 
 @router.put("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
 def update_widget_c(widget_id: int, widget: schemas.WidgetCUpdate, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.update_widget_c(db, widget_id=widget_id, widget=widget)
     if db_widget is None:
         raise HTTPException(status_code=404, detail="Widget C not found")
-    return db_widget
+    return schemas.ApiResponse(data=db_widget, message="Widget C updated successfully")
 
 @router.delete("/widget-c/{widget_id}", response_model=schemas.ApiResponse[schemas.WidgetC])
 def delete_widget_c(widget_id: int, db: Session = Depends(get_db)):
     db_widget = services.WidgetService.delete_widget_c(db, widget_id=widget_id)
     if db_widget is None:
         raise HTTPException(status_code=404, detail="Widget C not found")
-    return db_widget
+    return schemas.ApiResponse(data=db_widget, message="Widget C deleted successfully")
 ```
-
-Note: The API responses are not wrapped in a `data` field. The response models directly match the schema definitions.
 
 ## 5. Update the Frontend Type Definitions
 
@@ -215,6 +218,7 @@ export const getWidgetsC = async (page: number, limit: number): Promise<Paginate
     throw handleApiError(error);
   }
 };
+
 
 export const createWidgetC = async (widget: WidgetCCreate): Promise<WidgetC> => {
   try {
@@ -560,7 +564,7 @@ __all__ = ["Base", "WidgetA", "WidgetB", "WidgetC"]
 This guide provides a comprehensive overview of adding a new resource to the FastAPI-React template. Key points to remember:
 
 1. Maintain consistency in naming conventions: use snake_case for backend and API interactions, and camelCase for frontend JavaScript/TypeScript variables.
-2. API responses are not wrapped in a `data` field. The response structure directly matches the defined schemas.
+2. All API responses are wrapped in an ApiResponse object, which includes a data field containing the actual response data and a message field.
 3. Implement proper error handling using the `handleApiError` function in frontend API calls.
 4. Ensure type consistency between backend Pydantic models and frontend TypeScript interfaces.
 5. Implement pagination consistently across the backend and frontend.
